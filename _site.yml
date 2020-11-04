@@ -1,0 +1,8 @@
+name: "MB website"
+navbar:
+  title: 'My Website'
+  left:
+    - text: "Home"
+    href: index.html
+    - text: "Beer Study"
+    href: ball_farrow_case_study.html
