@@ -1,0 +1,13 @@
+name: Beer_App
+title: Beer_App
+username:
+account: megball7
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3191111
+bundleId: 3835800
+url: https://megball7.shinyapps.io/Beer_App/
+when: 1604889190.46035
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app.Rmd
