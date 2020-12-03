@@ -1,0 +1,904 @@
+---
+title: "Attrition Study - Case Study 2"
+author: "Megan Ball"
+date: "11/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+
+#load packages
+library(dplyr)
+library(readr)
+library(gt)
+library(summarytools)
+library(GGally)
+library(caret)
+library(e1071)
+library(class)
+library(DMwR)
+library(ROCR)
+library(RColorBrewer)
+```
+
+# Executive Summary
+
+A dataset containing 870 observations and a total of 35 variables was analyzed to look at what are the top factors leading to attrition, build a model to predict attrition, and build another model to predict the monthly income (salary). From this analysis, the top factors that lead to attrition are the specific job role, job level, monthly income, low work-life balance ratings, and low environment satisfaction. Additionally, a  model was built with overall accuracy of 83%, sensitivity of 80%, and specificity of 83% at prediction attrition using a Naive-Bayes classifier. Another model to predict monthly income was also built and had a resulting RMSE of $1124.
+
+# Load the Data 
+```{r message = FALSE}
+df <- read_csv(here::here("data", "CaseStudy2-data.csv"))
+
+# Check for missing values
+tibble(variable = names(colSums(is.na(df))),
+       missing = colSums(is.na(df))) %>% 
+  gt() %>% 
+  tab_header(title = "Missing Values in Data") 
+
+#remove ID
+df <- df %>% dplyr::select(-c(ID))
+
+```
+
+
+
+```{r warning = FALSE}
+
+#summarize data
+summary(df)
+#print(dfSummary(df, method = "browser"))
+str(df)
+
+summary(df$StandardHours)
+
+```
+
+Comments on the data:<br>
+- Investigate employee count- it has only one distinct value<br>
+- Monthly income is skewed, as is expected with most income data<br>
+- Over18 is all Y, so may remove the column as it is not useful data<br>
+- Standard Hours is all 80, so may also remove this column<br>
+- Investigate monthly income values, $19,999 seems pretty high for the max<br>
+- There are no missing values in the data
+
+```{r}
+#update all characters to factors
+df[sapply(df, is.character)] <- lapply(df[sapply(df, is.character)], 
+                                       as.factor)
+
+str(df)
+```
+
+Even though Education, EnvironmentSatisfaction, JobInvolvement, JobLevel, JobSatisfaction, PerformanceRating, StockOptionLevel, TrainingTimesLastYear, and WorkLifeBalance are all numeric, they all have distinct levels and therefore should be considered as factors and not continuous numeric variables.
+
+```{r message = FALSE, warning = FALSE}
+#update other groups to factors
+cols <- c("Education", "EnvironmentSatisfaction", "JobInvolvement","JobLevel","JobSatisfaction","PerformanceRating","StockOptionLevel","TrainingTimesLastYear","WorkLifeBalance","NumCompaniesWorked","RelationshipSatisfaction")
+
+df[cols] <- lapply(df[cols], factor) 
+
+str(df)
+print(dfSummary(df, graph.magnif = 0.75), method = 'browser')
+
+```
+
+We actually want a few to be ordered factors as they are ratings.
+
+```{r}
+df$Education <- factor(df$Education, ordered = TRUE)
+df$EnvironmentSatisfaction <- factor(df$EnvironmentSatisfaction, ordered = TRUE)
+df$JobLevel <- factor(df$JobLevel, ordered = TRUE)
+df$JobSatisfaction <- factor(df$JobSatisfaction, ordered = TRUE)
+df$PerformanceRating <- factor(df$PerformanceRating, ordered = TRUE)
+df$RelationshipSatisfaction <- factor(df$RelationshipSatisfaction, ordered = TRUE)
+df$WorkLifeBalance <- factor(df$WorkLifeBalance, ordered = TRUE)
+
+#str(df)
+```
+# Exploratory Data Analysis
+
+```{r}
+#set colors for graphs
+cbPalette <- c("#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7","#999999", "#E69F00")
+
+#check monthly income high values
+df %>%
+  ggplot(aes(x = JobRole, y = MonthlyIncome, fill = JobLevel)) +
+  geom_boxplot() +
+  ggtitle("Job Role & Income") +
+  scale_fill_manual(values=cbPalette)
+
+df %>%
+  ggplot(aes(x = JobLevel, y = MonthlyIncome, fill = JobLevel)) +
+  geom_boxplot() +
+  ggtitle("Job Level & Income") +
+  scale_fill_manual(values=cbPalette)
+
+
+```
+
+Monthly income seems to align with job levels. The highest salaries are at job level of 4 & 5, so is probably not an anomaly.
+
+```{r}
+#remove unnecessary values, employee count, over18, and standard hours
+df <- df %>% dplyr::select(-c(EmployeeCount, Over18, StandardHours, EmployeeNumber))
+```
+
+We are now down to 32 variables instead of original 35 by removing ones that contribute no value.
+
+```{r}
+#check if we need to limit total working years
+boxplot(df$TotalWorkingYears)
+
+```
+Exclude all 'outliers' as we aren't really interested in attrition rate for people that have been working > 30 years, since they are closer to retirement age generally than those working for< 30 years.
+
+```{r}
+df <- df %>% filter(TotalWorkingYears <= 30)
+
+```
+
+We are now down to 845 observations, but it removed some potentially influential outliers. It now limits our scope to employees working 30 or less years.
+
+Let's check what that now has done to our other years variables.
+
+```{r include=FALSE}
+print(dfSummary(df, graph.magnif = 0.75), method = 'browser')
+summary(df)
+```
+
+YearsSinceLastPromotion also looks like it might have some outliers, let's check the boxplot.
+
+```{r}
+boxplot(df$YearsSinceLastPromotion)
+
+```
+
+This seems to be an important variable in determining attrition, so let's leave it in, but we do have quite a few outliers.
+
+```{r echo=FALSE}
+#Explore relationships with scatterplot matrix
+
+#continuous variables only
+df.numeric <- df[ , sapply(df, is.numeric)]
+
+#start with corrplot since there are so many variables
+ggcorr(df.numeric)
+```
+
+```{r}
+#plot the highest correlation variables to investigate further
+
+df %>% ggplot(aes(x= Age, y = YearsAtCompany, colour = Attrition)) +
+  geom_point()
+
+df %>% ggplot(aes(x= Age, y = YearsAtCompany, colour = MonthlyIncome)) +
+  geom_point()
+
+df %>% ggplot(aes(x= MonthlyIncome, y = TotalWorkingYears, colour = Attrition)) +
+  geom_point()
+
+df %>% ggplot(aes(x= MonthlyIncome, y = TotalWorkingYears, colour = MonthlyIncome)) +
+  geom_point()
+
+df %>% ggplot(aes(x= TotalWorkingYears, y = YearsAtCompany, colour = Attrition)) +
+  geom_point()
+
+
+df %>% ggplot(aes(x= TotalWorkingYears, y = YearsAtCompany, colour = MonthlyIncome)) +
+  geom_point()
+
+```
+
+All of the data including years in the role, total working years, etc show high correlations as to be expected. However, these also seem to be valuable predictors in determining attrition and monthly income so do not want to remove them at this time.
+
+```{r}
+#check distance from home
+
+df %>%
+  ggplot(aes(x = Attrition, y = DistanceFromHome, fill = Attrition)) +
+  geom_boxplot() +
+  ggtitle("Attrition and Distance From Home") +
+  scale_fill_manual(values=cbPalette)
+
+```
+
+It looks like there could be higher attrition with farther home distances, but may not be significantly different. Perform t-test to check.
+
+```{r}
+t.test(DistanceFromHome ~ Attrition, data = df, mu = 0, conf.level = 0.95)
+
+```
+
+With a p-value of 0.015, we do reject the null hypothesis that the true difference in means is equal to 0 for both groups. The mean for the group that is "yes" for attrition is 10.96 miles, whereas the mean for the group that is "no" is 8.99 miles. This does not seem to be a practically significant difference.
+
+```{r message = FALSE}
+#look at attrition by job level and job role
+df %>% 
+    group_by(JobLevel) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = JobLevel, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Job Level") +
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+ggsave("joblevel.png")
+
+df %>% 
+    group_by(JobRole) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = JobRole, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  coord_flip() +
+  ggtitle("Attrition Rates by Job Role") +
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+ggsave("jobrole.png")
+```
+
+As expected, the earlier you are in your career, the higher the attrition rate. It is interesting to note that job level 4 has the lowest attrition rate of all the levels at only 6.52%.
+
+Sales representatives have by far the highest attrition rate at almost half, 45.3%. Research Directors and Manufacturing Directors are lowest at 2.3% and 1.2% respectively.
+
+```{r}
+#Check attrition and salary by education level
+df %>% 
+    group_by(Education) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = Education, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Education") +
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+
+df %>% ggplot(aes(x = Education, y = MonthlyIncome, fill = Education)) +
+  geom_boxplot() +
+  ggtitle("Monthly Income Based on Education Level") +
+  scale_fill_manual(values=cbPalette)
+
+
+```
+
+Attrition seems to be independent of education level, although it decreases slightly with post-graduate levels. Monthly Income also does not change significantly until you reach the post-graduate level as well.
+
+```{r}
+#plot hourly rate vs monthly income - corrplot didn't show correlation which is odd
+
+df %>%
+  ggplot(aes(x = HourlyRate, y = MonthlyIncome, color = OverTime)) +
+  geom_point() +
+  ggtitle("Monthly Income vs Hourly Rate")
+
+```
+This relationship is very odd. You would expect the monthly income to increase the same as hourly rate, given that our data reported standard hours as 80 for each data row. Suspect this if salaried or not. Keep it in for now, may turn out to be useful.
+
+```{r}
+#check monthly rate and monthly income
+
+df %>%
+  ggplot(aes(x = MonthlyRate, y = MonthlyIncome, color = OverTime)) +
+  geom_point() +
+  ggtitle("Monthly Income vs Monthly Rate")
+
+
+```
+```{r message = FALSE}
+#check attrition based on monthly income
+df %>%
+  ggplot(aes(x = Attrition, y = MonthlyIncome, fill = Attrition)) +
+  geom_boxplot() +
+  ggtitle("Attrition and Monthly Income") +
+  scale_fill_manual(values=cbPalette) 
+ggsave("income.png")
+```
+
+Lower monthly incomes are associated with more attrition.
+
+```{r}
+#check the outliers in the "yes" group
+df %>% filter(Attrition == "Yes") %>% top_n(3, MonthlyIncome)
+
+```
+
+```{r}
+#Run t-test to check if statistically significant
+
+t.test(MonthlyIncome ~ Attrition, data = df, mu = 0, conf.level = 0.95)
+
+```
+
+With a p-value of < 0.001, we reject the null hypothesis that the true difference in means of monthly income are equal for those that quit and those that do not. Therefore we can conclude monthly income has some influence on attrition rates.
+
+```{r}
+#look at attrition by years since last promotion
+df %>% 
+    group_by(YearsSinceLastPromotion) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = YearsSinceLastPromotion, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Years Since Last Promotion") +
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+
+```
+
+There does not seem to be a single conclusion that can be made for attrition based on years since last promotion.
+
+```{r message = FALSE}
+#look at attrition by work/life balance
+df %>% 
+    group_by(WorkLifeBalance) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = WorkLifeBalance, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Work/Life Balance") +
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+ggsave("overall.png")
+
+#job roles for lowest work/life balance ratings + attrition = "yes"
+pie <- df %>%
+  filter(WorkLifeBalance == "1" & Attrition == "Yes")
+
+pie %>% group_by(JobRole) %>%
+  count(JobRole) %>%
+  ggplot(aes(x = JobRole, y = n, fill = JobRole)) +
+  geom_bar(stat = "identity") +
+  labs(title="Lowest Work-Life Balance Jobs",
+       subtitle = "Among Employees That Leave")  +
+  ylab("Count") +
+  scale_fill_manual(values=cbPalette) +
+  theme(legend.position = "none") +
+  coord_flip()
+ggsave("worklife.png")
+
+#how many of each job role overall
+df %>% 
+    group_by(JobRole) %>% 
+    count(JobRole)
+```
+Assuming that 1 is bad work/life balance, it would make sense to see higher attrition rates for this variable. 
+
+Let's check for business travel.
+
+```{r}
+df %>% 
+    group_by(BusinessTravel) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = BusinessTravel, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Amount of Business Travel") +
+  ylab("Proportion")
+```
+No strong conclusions to make about business travel.
+
+```{r}
+#environment satisfaction
+df %>% 
+    group_by(EnvironmentSatisfaction) %>% 
+    count(Attrition) %>% 
+    mutate(prop = n/sum(n)) %>% 
+    ggplot(aes(x = EnvironmentSatisfaction, y = prop)) +
+    geom_col(aes(fill = Attrition), position = "dodge") +
+    geom_text(aes(label = scales::percent(prop), 
+                  y = prop, 
+                  group = Attrition),
+              position = position_dodge(width = 0.9),
+              vjust = 1.5) +
+  ggtitle("Attrition Rates by Environment Satisfaction") +
+  ylab("Proportion")
+
+pie2 <- df %>%
+  filter(EnvironmentSatisfaction == "1" & Attrition == "Yes")
+
+pie2 %>% group_by(JobRole) %>%
+  count(JobRole) %>%
+  ggplot(aes(x = JobRole, y = n, fill = JobRole)) +
+  geom_bar(stat = "identity") +
+  labs(title="Lowest Environment Satisfaction",
+       subtitle = "Among Employees that Leave")  +
+  ylab("Count") +
+  scale_fill_manual(values=cbPalette) +
+  theme(legend.position = "none") +
+  coord_flip()
+ggsave("environment.png")
+```
+
+
+Before going into our model building, the top variables that seem to indicate attrition are:
+- Work/Life Balance
+- Job Level
+- Monthly Income
+- Job Role
+- Environment Satisfaction
+
+# Standardize Data for KNN
+```{r}
+#create standardized data set to run specifically for knn
+
+df.std <- df %>%
+    mutate_if(is.numeric, scale)
+
+```
+
+
+
+# Create Test/Train Splits
+
+```{r}
+#data set is pretty small at only 870 obs, complete 70/30 splits and get reasonable amount of YES in each set
+
+# set random seed
+set.seed(1) 
+# create the training partition that is 70% of total obs
+inTraining <- createDataPartition(df$Attrition, p=0.7, list=FALSE)
+# create training/testing dataset
+trainSet <- df[inTraining,]   
+testSet <- df[-inTraining,]   
+# verify number of obs 
+nrow(trainSet)
+nrow(testSet) 
+
+head(trainSet)
+head(testSet)
+
+#check how many "Yes" attrition in train & test
+summary(trainSet$Attrition)
+summary(testSet$Attrition)
+   
+```
+# Test/Train for KNN only
+```{r}
+# set random seed
+set.seed(1) 
+# create the training partition that is 70% of total obs
+inTraining <- createDataPartition(df.std$Attrition, p=0.7, list=FALSE)
+# create training/testing dataset
+trainSet.knn <- df.std[inTraining,]   
+testSet.knn <- df.std[-inTraining,]   
+# verify number of obs 
+nrow(trainSet.knn)
+nrow(testSet.knn) 
+
+#check how many "Yes" attrition in train & test
+summary(trainSet.knn$Attrition)
+summary(testSet.knn$Attrition)
+```
+
+# KNN Model
+
+```{r}
+#loop to find optimal k for sensitivity
+
+accs <- data.frame(accuracy = numeric(20), k = numeric(20))
+sens <- data.frame(sensitivity = numeric(20), k = numeric(20))
+
+#make numeric only train and test as knn can only run on continuous variables
+trainNum <- trainSet.knn[ , sapply(trainSet.knn, is.numeric)]
+#add back Attrition
+trainNum <- cbind(trainNum,trainSet.knn$Attrition)
+names(trainNum)[names(trainNum)=="trainSet.knn$Attrition"] <- "Attrition"
+
+testNum <- testSet.knn[ , sapply(testSet.knn, is.numeric)]
+#add back Attrition
+testNum <- cbind(testNum,testSet.knn$Attrition)
+names(testNum)[names(testNum)=="testSet.knn$Attrition"] <- "Attrition"
+
+for(i in 1:20)
+{
+  classifications <- knn(trainNum[,1:12],testNum[,1:12],trainNum$Attrition,prob = TRUE, k = i)
+  table(testNum$Attrition,classifications)
+  CM <- confusionMatrix(table(testNum$Attrition,classifications), positive = "Yes")
+  accs$accuracy[i] = CM$overall[1]
+  accs$k[i] = i
+  sens$sensitivity[i] = CM$byClass[1]
+  sens$k[i] = i
+}
+
+plot(accs$k,accs$accuracy, type = "l", xlab = "k")
+plot(sens$k,sens$sensitivity, type = "l", xlab = "k")
+accs
+sens
+which.max(sens$sensitivity)
+```
+
+# Run KNN
+```{r}
+#k=17 had good accuracy and sensitivity, run model with k=17 and check sensitivity and specificity on test set
+
+classifications <- knn(trainNum[,1:12],testNum[,1:12],trainNum$Attrition,prob = TRUE, k = 17)
+table(testNum$Attrition,classifications)
+CM <- confusionMatrix(table(testNum$Attrition,classifications), positive = "Yes")
+CM
+```
+
+We have overall accuracy at 84%, sensitivity at 75%, and specificity at 85%. Overall that's not too bad, but it only predicted "Yes" 3 times out of 41 actual yeses.
+
+Let's run with only the top suspected numeric variables.
+
+```{r}
+classifications_top <- kNN(Attrition ~ MonthlyIncome + TotalWorkingYears + YearsAtCompany,trainNum,testNum,prob = TRUE, k = 5)
+#table(testNum$Attrition,classifications_top)
+CM_top <- confusionMatrix(table(testNum$Attrition,classifications_top), positive = "Yes")
+CM_top
+
+```
+
+# KNN with caret
+
+```{r}
+## KNN with 10x cross validation repeated 5x
+fitControl <- trainControl(method="repeatedcv",
+                           repeats = 5,
+                           number=10,
+                           classProbs=T,
+                           summaryFunction=twoClassSummary)
+
+set.seed(1234)
+## evaluate on train set based on area under the ROC (AUC)
+KNN_caret <- train(Attrition ~.,
+             data=trainNum,
+             method="knn",
+             trControl=fitControl,
+             tuneGrid=expand.grid(.k=c(1,3,5,7,9,11,15,17)),
+             metric = "ROC")
+
+KNN_caret
+
+```
+
+Because we suspect the top contributing factors to be factors and not numeric variables, KNN is probably  not best model (but it is odd it had the exact same performance with just a few numeric variables). Let's move on to Naive Bayes which will use both numeric and factors.
+
+# Naive Bayes Classifier
+
+```{r}
+#run model on all variables
+NB1 = naiveBayes(Attrition~ .,data = trainSet)
+summary(NB1)
+
+#predict on the test set
+pred1 <- predict(NB1,testSet, type = "raw")
+
+#confusion matrix
+confusionMatrix(table(predict(NB1,testSet),testSet$Attrition), positive = "Yes")
+
+summary(testSet$Attrition)
+summary(trainSet$Attrition)
+
+```
+
+Our Naive Bayes classifier performs really good in comparison to best KNN model. Overall accuracy is 84% with specificity at 86% and sensitivity at 73%. Of our total 41 yeses, it predicted 30 accurately.
+
+```{r}
+#check for different cut off for better performance
+preds_nb <- as.data.frame(pred1)
+
+preds_nb1 <- prediction(preds_nb[,2],testSet$Attrition)
+roc.perf_nb = performance(preds_nb1, measure = "tpr", x.measure = "fpr")
+auc.train_nb <- performance(preds_nb1, measure = "auc")
+auc.train_nb <- auc.train_nb@y.values
+plot(roc.perf_nb, colorize = TRUE)
+```
+```{r}
+#check metrics when cut-off = 0.4 instead of 0.5
+cutoff<-0.4
+class.nb<-factor(ifelse(pred1[,2]>cutoff,"Yes","No"))
+
+confusionMatrix(class.nb,testSet$Attrition, positive = "Yes")
+
+```
+
+Metrics improve slightly with cutoff at 0.4 instead of 0.5, with sens/spec both around 80%. This is our best model so far.
+
+```{r}
+#run model on top variables from EDA
+NB2 = naiveBayes(Attrition~ WorkLifeBalance + MonthlyIncome + JobLevel + JobRole + EnvironmentSatisfaction,data = trainSet)
+summary(NB2)
+
+#predict on the test set
+pred2 <- predict(NB2,testSet, type="raw")
+
+#confusion matrix
+confusionMatrix(table(predict(NB2,testSet),testSet$Attrition), positive = "Yes")
+
+```
+
+When we subset to what we suspected were the top variables, our sensitivity decreases to 34%.
+
+```{r}
+#check for different cut off for better performance
+preds_nb2 <- as.data.frame(pred2)
+
+preds_nb2 <- prediction(preds_nb2[,2],testSet$Attrition)
+roc.perf_nb2 = performance(preds_nb2, measure = "tpr", x.measure = "fpr")
+auc.train_nb2 <- performance(preds_nb2, measure = "auc")
+auc.train_nb2 <- auc.train_nb2@y.values
+plot(roc.perf_nb2, colorize = TRUE)
+```
+
+Maybe these are not in fact the top variables, as our sensitivity drops off with just these variables and our AUC goes down. 
+
+Let's try a Random Forest classifier which will also tell us variable importance.
+
+# Random Forest
+
+```{r echo = FALSE}
+#run Random Forest using caret and cross validation
+
+rfGrid <- expand.grid(mtry=c(10, 50, 100, 250, 500))
+
+rfControl <- trainControl(method="repeatedcv",
+                          number=10,
+                          repeats = 3,
+                          classProbs=T,
+                          summaryFunction=twoClassSummary)
+
+fitRF <- train(Attrition ~.,
+               data = trainSet,
+               method="rf",
+               trControl=rfControl,
+               tuneGrid = rfGrid,
+               metric='ROC')
+
+```
+```{r}
+fitRF
+
+varImp(fitRF)
+```
+
+Re-run Naive Bayes with top 10 variables per Random Forest model.
+
+```{r}
+#Naive Bayes
+NB3 = naiveBayes(Attrition~ MonthlyIncome + Age + TotalWorkingYears + DailyRate + OverTime + MonthlyRate + HourlyRate + PercentSalaryHike + DistanceFromHome + YearsAtCompany,data = trainSet)
+summary(NB3)
+
+#predict on the test set
+pred3 <- predict(NB3,testSet,type="raw")
+
+#confusion matrix
+confusionMatrix(table(predict(NB3,testSet),testSet$Attrition), positive = "Yes")
+
+
+```
+
+```{r}
+#check for different cut off for better performance
+preds_nb3 <- as.data.frame(pred3)
+
+preds_nb3 <- prediction(preds_nb3[,2],testSet$Attrition)
+roc.perf_nb3 = performance(preds_nb3, measure = "tpr", x.measure = "fpr")
+auc.train_nb3 <- performance(preds_nb3, measure = "auc")
+auc.train_nb3 <- auc.train_nb3@y.values
+plot(roc.perf_nb3, colorize = TRUE)
+```
+
+Let's stick with our best model for classification: Naive Bayes with all variables and cutoff of 0.4.
+
+### Save Classification Model
+```{r echo = FALSE}
+
+final_class <- NB1
+
+```
+
+Let's move on to creating a linear regression model to predict monthly income.
+
+
+# Linear Regression for Monthly Salary
+
+```{r}
+#first pass model with all variables
+
+linear1 <- lm(MonthlyIncome ~., data = trainSet)
+summary(linear1)
+
+```
+Our linear regression model using all variables gives an Adj R-squared of 0.95 and RMSE of $1019. 
+
+```{r}
+pred_linear1 <- predict(linear1, newdata = testSet)
+postResample(testSet$MonthlyIncome,pred_linear1)
+
+```
+
+Our test set performance is also equally good. However, these values make me suspect some over-fitting of the data. Let's check residuals.
+
+```{r}
+plot(linear1)
+```
+
+Residuals look OK, but we know that MonthlyIncome is skewed. Let's re-run with log transform to see if our residuals look better. However, we are building this purely as a predictive model, so meeting our assumptions is not really important versus if we were developing a purely explanatory model.
+
+```{r}
+
+linear2 <- lm(log(MonthlyIncome) ~., data = trainSet)
+summary(linear2)
+
+```
+
+Our R-squared decreases a bit, and we have to recalculate our RMSE since it's on the log scale, but let's check residuals.
+
+```{r}
+plot(linear2)
+
+```
+
+Residuals look a little better. Since our goal is prediction, let's proceed with this model including all variables as it yields good performance.
+
+
+```{r}
+#predict on test set and check performance
+predict_lm <- predict(linear2, newdata = testSet)
+
+postResample(exp(predict_lm), testSet$MonthlyIncome)
+```
+
+We have good performance on our test set as well, with RMSE < $3000 at $1123 and our Rsquared at 0.929. 
+
+### Save Linear Model
+
+```{r}
+final_linear <- linear2
+```
+
+# Make and Save Predictions
+
+## Attrition Classifier
+```{r}
+#load in data
+attrition <- read_csv(here::here("data", "CaseStudy2CompSet No Attrition.csv"))
+
+#pre-process to match training set
+
+# Check for missing values
+tibble(variable = names(colSums(is.na(attrition))),
+       missing = colSums(is.na(attrition))) %>% 
+  gt() %>% 
+  tab_header(title = "Missing Values in Data") 
+
+#have to keep ID in for our prediction comparison, will exclude when running model
+
+```
+
+```{r}
+#update all characters to factors
+attrition[sapply(attrition, is.character)] <- lapply(attrition[sapply(attrition, is.character)], 
+                                       as.factor)
+
+#str(attrition)
+```
+
+```{r}
+
+#update other groups to factors
+attrition[cols] <- lapply(attrition[cols], factor) 
+
+#str(attrition)
+```
+
+```{r}
+attrition$Education <- factor(attrition$Education, ordered = TRUE)
+attrition$EnvironmentSatisfaction <- factor(attrition$EnvironmentSatisfaction, ordered = TRUE)
+attrition$JobLevel <- factor(attrition$JobLevel, ordered = TRUE)
+attrition$JobSatisfaction <- factor(attrition$JobSatisfaction, ordered = TRUE)
+attrition$PerformanceRating <- factor(attrition$PerformanceRating, ordered = TRUE)
+attrition$RelationshipSatisfaction <- factor(attrition$RelationshipSatisfaction, ordered = TRUE)
+attrition$WorkLifeBalance <- factor(attrition$WorkLifeBalance, ordered = TRUE)
+
+#str(attrition)
+```
+
+
+```{r}
+#remove unnecessary values, employee count, over18, and standard hours
+attrition <- attrition %>% dplyr::select(-c(EmployeeCount, Over18, StandardHours, EmployeeNumber))
+```
+
+## Make Predictions
+```{r}
+#predict on test set and check performance
+predict_attrition <- predict(final_class, newdata = attrition[,2:31])
+
+#join back to original dataset
+attrition <- attrition %>% mutate(Attrition = predict_attrition)
+
+#remove all columns except ID
+attrition <- attrition %>% select(c("ID","Attrition"))
+
+#save file
+Case2PredictionsBall_Attrition  <- write.csv(attrition, "Case2PredictionsBall_Attrition.csv", row.names = FALSE)
+```
+
+
+## Salary Predictor
+
+```{r}
+#load in data
+salary <- read_csv(here::here("data", "CaseStudy2CompSet No Salary.csv"))
+
+#pre-process to match training set
+
+# Check for missing values
+tibble(variable = names(colSums(is.na(salary))),
+       missing = colSums(is.na(salary))) %>% 
+  gt() %>% 
+  tab_header(title = "Missing Values in Data") 
+
+#have to keep ID in for our prediction comparison, will exclude when running model
+```
+```{r}
+salary[sapply(salary, is.character)] <- lapply(salary[sapply(salary, is.character)], 
+                                       as.factor)
+
+#update other groups to factors
+salary[cols] <- lapply(salary[cols], factor) 
+
+salary$Education <- factor(salary$Education, ordered = TRUE)
+salary$EnvironmentSatisfaction <- factor(salary$EnvironmentSatisfaction, ordered = TRUE)
+salary$JobLevel <- factor(salary$JobLevel, ordered = TRUE)
+salary$JobSatisfaction <- factor(salary$JobSatisfaction, ordered = TRUE)
+salary$PerformanceRating <- factor(salary$PerformanceRating, ordered = TRUE)
+salary$RelationshipSatisfaction <- factor(salary$RelationshipSatisfaction, ordered = TRUE)
+salary$WorkLifeBalance <- factor(salary$WorkLifeBalance, ordered = TRUE)
+
+#str(salary)
+
+#remove unnecessary values, employee count, over18, and standard hours
+salary <- salary %>% dplyr::select(-c(EmployeeCount, Over18, StandardHours, EmployeeNumber))
+```
+
+## Make Predictions
+
+```{r}
+#predict on test set and check performance
+predict_salary <- predict(final_linear, newdata = salary[,2:31])
+
+#join back to original dataset
+salary <- salary %>% mutate(MonthlyIncome = exp(predict_salary))
+
+#remove all columns except ID
+salary <- salary %>% select(c("ID","MonthlyIncome"))
+
+#save file
+Case2PredictionsBall_Salary  <- write.csv(salary, "Case2PredictionsBall_Salary.csv", row.names = FALSE)
+```
