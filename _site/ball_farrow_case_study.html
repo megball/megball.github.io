@@ -278,6 +278,9 @@ $(document).ready(function () {
 <li>
   <a href="ball_farrow_case_study.html">Beer Study</a>
 </li>
+<li>
+  <a href="ball_farrow_case_study.html">Attrition Rate Study</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -2598,10 +2601,10 @@ beer_brew %&gt;%
 <p>Now that the data was successfully merged together, we began the process of investigating and addressing the missing values in the data set. Unfortunately there are a number of missing values, particularly when it comes to ABV and IBU. After examining the histograms for those two variables, we made two decisions. The first was to exclude cider and mead from the analysis because they are not beer. The second was to impute the mean ABV and IBU value by beer style for all missing values of those variables. We felt that offered the best balance between not losing observations and staying true to the beer’s style. Our final task for this question was to simply remove any remaining observations with missing values.</p>
 <pre class="r"><code># How many missing values do we currently have in the data?
 colSums(is.na(beer_brew))</code></pre>
-<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name 
-##            0            0           62         1005            0            5            0            0 
-##         city        state 
-##            0            0</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0           62         1005            0            5            0            0            0 
+##        state 
+##            0</code></pre>
 <pre class="r"><code># What is the distribution of ABV and IBU before imputation?
 hist(beer_brew$abv)</code></pre>
 <p><img src="ball_farrow_case_study_files/figure-html/address-na-1.png" width="672" /></p>
@@ -2610,12 +2613,12 @@ hist(beer_brew$abv)</code></pre>
 <pre class="r"><code># Check which styles are NA for ABV and IBU
 filter(beer_brew, ibu == &quot;NaN&quot;)</code></pre>
 <pre><code>## # A tibble: 0 x 10
-## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;,
-## #   style &lt;chr&gt;, ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
+## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;, style &lt;chr&gt;,
+## #   ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
 <pre class="r"><code>filter(beer_brew, abv == &quot;NaN&quot;)</code></pre>
 <pre><code>## # A tibble: 0 x 10
-## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;,
-## #   style &lt;chr&gt;, ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
+## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;, style &lt;chr&gt;,
+## #   ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
 <pre class="r"><code># Get rid of cider and mead because they are not beer
 beer_brew &lt;- beer_brew %&gt;%
   filter((style != &quot;Cider&quot;) &amp; (style != &quot;Mead&quot;))
@@ -2640,10 +2643,10 @@ hist(beer_brew$abv)</code></pre>
 <p><img src="ball_farrow_case_study_files/figure-html/address-na-4.png" width="672" /></p>
 <pre class="r"><code># Check for any remaining NA
 colSums(is.na(beer_brew))</code></pre>
-<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name 
-##            0            0            0           10            0            0            0            0 
-##         city        state 
-##            0            0</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0            0           10            0            0            0            0            0 
+##        state 
+##            0</code></pre>
 <pre class="r"><code># Still a stubborn 10 rows that are NA - this is because these styles don&#39;t have
 # IBU. Remove these rows
 beer_brew &lt;- beer_brew %&gt;% 
@@ -2651,10 +2654,10 @@ beer_brew &lt;- beer_brew %&gt;%
 
 # Check for any remaining NA
 colSums(is.na(beer_brew))</code></pre>
-<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name 
-##            0            0            0            0            0            0            0            0 
-##         city        state 
-##            0            0</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0            0            0            0            0            0            0            0 
+##        state 
+##            0</code></pre>
 </div>
 <div id="median-abv-ibu" class="section level2">
 <h2>Median ABV &amp; IBU</h2>
@@ -2794,28 +2797,28 @@ ggplot(median_map, aes(long, lat, group = group)) +
 beer_brew %&gt;% 
   filter(state == &quot;DE&quot; | state == &quot;WV&quot;)</code></pre>
 <pre><code>## # A tibble: 4 x 10
-##   beer_name      beer_id    abv   ibu brewery_id style          ounces brewery_name            city    state
-##   &lt;chr&gt;            &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;
-## 1 Wild Trail Pa~    2314 0.057   44          157 American Pale~     12 Greenbrier Valley Brew~ Lewisb~ WV   
-## 2 Mothman Black~    2313 0.067   71          157 American Blac~     12 Greenbrier Valley Brew~ Lewisb~ WV   
-## 3 Appreciation ~    1784 0.0645  67.6        317 American IPA       16 Iron Hill Brewery &amp; Re~ Wilmin~ DE   
-## 4 Greenville Pa~     433 0.055   52          540 American Pale~     12 Twin Lakes Brewing Com~ Greenv~ DE</code></pre>
+##   beer_name        beer_id    abv   ibu brewery_id style             ounces brewery_name               city     state
+##   &lt;chr&gt;              &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;                      &lt;chr&gt;    &lt;chr&gt;
+## 1 Wild Trail Pale~    2314 0.057   44          157 American Pale Al~     12 Greenbrier Valley Brewing~ Lewisbu~ WV   
+## 2 Mothman Black I~    2313 0.067   71          157 American Black A~     12 Greenbrier Valley Brewing~ Lewisbu~ WV   
+## 3 Appreciation Ale    1784 0.0645  67.6        317 American IPA          16 Iron Hill Brewery &amp; Resta~ Wilming~ DE   
+## 4 Greenville Pale~     433 0.055   52          540 American Pale Al~     12 Twin Lakes Brewing Company Greenvi~ DE</code></pre>
 <pre class="r"><code>#which are the low &amp; high ABV beers in UT, WV
 beer_brew %&gt;% 
   filter(state == &quot;UT&quot; | state == &quot;WV&quot;)</code></pre>
 <pre><code>## # A tibble: 28 x 10
-##    beer_name        beer_id   abv   ibu brewery_id style            ounces brewery_name         city   state
-##    &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;                &lt;chr&gt;  &lt;chr&gt;
-##  1 Bohemian Export~    1607 0.06   23.8        365 Dortmunder / Ex~     12 Bohemian Brewery     Midva~ UT   
-##  2 Altus Bohemes A~    1597 0.053  34.1        365 Altbier              12 Bohemian Brewery     Midva~ UT   
-##  3 Cherny Bock          344 0.04   31          365 Schwarzbier          12 Bohemian Brewery     Midva~ UT   
-##  4 Czech Pilsner         89 0.05   33.8        365 Czech Pilsener       12 Bohemian Brewery     Midva~ UT   
-##  5 Viennese Lager        88 0.05   24.4        365 Vienna Lager         12 Bohemian Brewery     Midva~ UT   
-##  6 Wild Trail Pale~    2314 0.057  44          157 American Pale A~     12 Greenbrier Valley B~ Lewis~ WV   
-##  7 Mothman Black I~    2313 0.067  71          157 American Black ~     12 Greenbrier Valley B~ Lewis~ WV   
-##  8 Squeaky Bike Nu~    1476 0.04   29.9        400 American Brown ~     16 Moab Brewery         Moab   UT   
-##  9 Dead Horse Amber     902 0.04   20.7        400 American Pale W~     16 Moab Brewery         Moab   UT   
-## 10 Rocket Bike Ame~     645 0.04   41          400 California Comm~     16 Moab Brewery         Moab   UT   
+##    beer_name           beer_id   abv   ibu brewery_id style              ounces brewery_name            city    state
+##    &lt;chr&gt;                 &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;
+##  1 Bohemian Export La~    1607 0.06   23.8        365 Dortmunder / Expo~     12 Bohemian Brewery        Midvale UT   
+##  2 Altus Bohemes Altb~    1597 0.053  34.1        365 Altbier                12 Bohemian Brewery        Midvale UT   
+##  3 Cherny Bock             344 0.04   31          365 Schwarzbier            12 Bohemian Brewery        Midvale UT   
+##  4 Czech Pilsner            89 0.05   33.8        365 Czech Pilsener         12 Bohemian Brewery        Midvale UT   
+##  5 Viennese Lager           88 0.05   24.4        365 Vienna Lager           12 Bohemian Brewery        Midvale UT   
+##  6 Wild Trail Pale Ale    2314 0.057  44          157 American Pale Ale~     12 Greenbrier Valley Brew~ Lewisb~ WV   
+##  7 Mothman Black IPA      2313 0.067  71          157 American Black Ale     12 Greenbrier Valley Brew~ Lewisb~ WV   
+##  8 Squeaky Bike Nut B~    1476 0.04   29.9        400 American Brown Ale     16 Moab Brewery            Moab    UT   
+##  9 Dead Horse Amber        902 0.04   20.7        400 American Pale Whe~     16 Moab Brewery            Moab    UT   
+## 10 Rocket Bike Americ~     645 0.04   41          400 California Common~     16 Moab Brewery            Moab    UT   
 ## # ... with 18 more rows</code></pre>
 </div>
 </div>
@@ -2827,17 +2830,17 @@ beer_brew %&gt;%
   arrange(desc(abv)) %&gt;% 
   filter(row_number() == 1)</code></pre>
 <pre><code>## # A tibble: 1 x 10
-##   beer_name                   beer_id   abv   ibu brewery_id style      ounces brewery_name      city  state
-##   &lt;chr&gt;                         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;
-## 1 Lee Hill Series Vol. 5 - B~    2565 0.128    24         52 Quadrupel~   19.2 Upslope Brewing ~ Boul~ CO</code></pre>
+##   beer_name                         beer_id   abv   ibu brewery_id style       ounces brewery_name       city   state
+##   &lt;chr&gt;                               &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;
+## 1 Lee Hill Series Vol. 5 - Belgian~    2565 0.128    24         52 Quadrupel ~   19.2 Upslope Brewing C~ Bould~ CO</code></pre>
 <pre class="r"><code># Highest IBU
 beer_brew %&gt;% 
   arrange(desc(ibu)) %&gt;% 
   filter(row_number() == 1)</code></pre>
 <pre><code>## # A tibble: 1 x 10
-##   beer_name          beer_id   abv   ibu brewery_id style              ounces brewery_name      city   state
-##   &lt;chr&gt;                &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;
-## 1 Bitter Bitch Impe~     980 0.082   138        375 American Double /~     12 Astoria Brewing ~ Astor~ OR</code></pre>
+##   beer_name            beer_id   abv   ibu brewery_id style                   ounces brewery_name        city   state
+##   &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;  &lt;chr&gt;
+## 1 Bitter Bitch Imperi~     980 0.082   138        375 American Double / Impe~     12 Astoria Brewing Co~ Astor~ OR</code></pre>
 </div>
 <div id="abv-summary-stats-and-distribution" class="section level2">
 <h2>ABV Summary Stats and Distribution</h2>
@@ -3099,18 +3102,18 @@ beer_brew %&gt;%
 beer_brew %&gt;%
   filter(state == &quot;UT&quot;)</code></pre>
 <pre><code>## # A tibble: 26 x 10
-##    beer_name         beer_id   abv   ibu brewery_id style            ounces brewery_name     city      state
-##    &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;
-##  1 Bohemian Export ~    1607 0.06   23.8        365 Dortmunder / Ex~     12 Bohemian Brewery Midvale   UT   
-##  2 Altus Bohemes Al~    1597 0.053  34.1        365 Altbier              12 Bohemian Brewery Midvale   UT   
-##  3 Cherny Bock           344 0.04   31          365 Schwarzbier          12 Bohemian Brewery Midvale   UT   
-##  4 Czech Pilsner          89 0.05   33.8        365 Czech Pilsener       12 Bohemian Brewery Midvale   UT   
-##  5 Viennese Lager         88 0.05   24.4        365 Vienna Lager         12 Bohemian Brewery Midvale   UT   
-##  6 Squeaky Bike Nut~    1476 0.04   29.9        400 American Brown ~     16 Moab Brewery     Moab      UT   
-##  7 Dead Horse Amber      902 0.04   20.7        400 American Pale W~     16 Moab Brewery     Moab      UT   
-##  8 Rocket Bike Amer~     645 0.04   41          400 California Comm~     16 Moab Brewery     Moab      UT   
-##  9 Johnny&#39;s America~     644 0.04   67.6        400 American IPA         16 Moab Brewery     Moab      UT   
-## 10 PUNK&#39;N               2310 0.05   10          160 Pumpkin Ale          12 Uinta Brewing C~ Salt Lak~ UT   
+##    beer_name            beer_id   abv   ibu brewery_id style                ounces brewery_name      city       state
+##    &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;
+##  1 Bohemian Export Lag~    1607 0.06   23.8        365 Dortmunder / Export~     12 Bohemian Brewery  Midvale    UT   
+##  2 Altus Bohemes Altbi~    1597 0.053  34.1        365 Altbier                  12 Bohemian Brewery  Midvale    UT   
+##  3 Cherny Bock              344 0.04   31          365 Schwarzbier              12 Bohemian Brewery  Midvale    UT   
+##  4 Czech Pilsner             89 0.05   33.8        365 Czech Pilsener           12 Bohemian Brewery  Midvale    UT   
+##  5 Viennese Lager            88 0.05   24.4        365 Vienna Lager             12 Bohemian Brewery  Midvale    UT   
+##  6 Squeaky Bike Nut Br~    1476 0.04   29.9        400 American Brown Ale       16 Moab Brewery      Moab       UT   
+##  7 Dead Horse Amber         902 0.04   20.7        400 American Pale Wheat~     16 Moab Brewery      Moab       UT   
+##  8 Rocket Bike America~     645 0.04   41          400 California Common /~     16 Moab Brewery      Moab       UT   
+##  9 Johnny&#39;s American I~     644 0.04   67.6        400 American IPA             16 Moab Brewery      Moab       UT   
+## 10 PUNK&#39;N                  2310 0.05   10          160 Pumpkin Ale              12 Uinta Brewing Co~ Salt Lake~ UT   
 ## # ... with 16 more rows</code></pre>
 <pre class="r"><code># 26 total beers, three cities: Midvale, Moab, SLC
 
@@ -3550,20 +3553,20 @@ beer_brew %&gt;%
 beer_brew %&gt;%
   filter(state == &quot;ND&quot; | state == &quot;SD&quot; | state == &quot;WV&quot;)</code></pre>
 <pre><code>## # A tibble: 12 x 10
-##    beer_name         beer_id   abv   ibu brewery_id style          ounces brewery_name          city   state
-##    &lt;chr&gt;               &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;           &lt;dbl&gt; &lt;chr&gt;                 &lt;chr&gt;  &lt;chr&gt;
-##  1 Red Water Irish ~    2145 0.065  36.3        213 American Ambe~     12 Crow Peak Brewing Co~ Spear~ SD   
-##  2 Mjöllnir             1804 0.066  22.2        213 Herbed / Spic~     12 Crow Peak Brewing Co~ Spear~ SD   
-##  3 Bear Butte Nut B~    1602 0.055  29.9        213 American Brow~     12 Crow Peak Brewing Co~ Spear~ SD   
-##  4 Easy Livin&#39; Summ~    1301 0.045  21.0        213 American Blon~     12 Crow Peak Brewing Co~ Spear~ SD   
-##  5 Canyon Cream Ale      542 0.055  20.3        213 Cream Ale          12 Crow Peak Brewing Co~ Spear~ SD   
-##  6 Pile O&#39;Dirt Port~     272 0.069  31.9        213 American Port~     12 Crow Peak Brewing Co~ Spear~ SD   
-##  7 11th Hour IPA         271 0.06   67.6        213 American IPA       12 Crow Peak Brewing Co~ Spear~ SD   
-##  8 Iron Horse Pale ~    1722 0.05   32          336 American Pale~     12 Fargo Brewing Company Fargo  ND   
-##  9 Stone&#39;s Throw IPA    1435 0.045  19          336 Scottish Ale       12 Fargo Brewing Company Fargo  ND   
-## 10 Wood Chipper Ind~    1434 0.067  70          336 American IPA       12 Fargo Brewing Company Fargo  ND   
-## 11 Wild Trail Pale ~    2314 0.057  44          157 American Pale~     12 Greenbrier Valley Br~ Lewis~ WV   
-## 12 Mothman Black IPA    2313 0.067  71          157 American Blac~     12 Greenbrier Valley Br~ Lewis~ WV</code></pre>
+##    beer_name            beer_id   abv   ibu brewery_id style            ounces brewery_name             city    state
+##    &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;             &lt;dbl&gt; &lt;chr&gt;                    &lt;chr&gt;   &lt;chr&gt;
+##  1 Red Water Irish Sty~    2145 0.065  36.3        213 American Amber ~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  2 Mjöllnir                1804 0.066  22.2        213 Herbed / Spiced~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  3 Bear Butte Nut Brow~    1602 0.055  29.9        213 American Brown ~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  4 Easy Livin&#39; Summer ~    1301 0.045  21.0        213 American Blonde~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  5 Canyon Cream Ale         542 0.055  20.3        213 Cream Ale            12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  6 Pile O&#39;Dirt Porter       272 0.069  31.9        213 American Porter      12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  7 11th Hour IPA            271 0.06   67.6        213 American IPA         12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  8 Iron Horse Pale Ale     1722 0.05   32          336 American Pale A~     12 Fargo Brewing Company    Fargo   ND   
+##  9 Stone&#39;s Throw IPA       1435 0.045  19          336 Scottish Ale         12 Fargo Brewing Company    Fargo   ND   
+## 10 Wood Chipper India ~    1434 0.067  70          336 American IPA         12 Fargo Brewing Company    Fargo   ND   
+## 11 Wild Trail Pale Ale     2314 0.057  44          157 American Pale A~     12 Greenbrier Valley Brewi~ Lewisb~ WV   
+## 12 Mothman Black IPA       2313 0.067  71          157 American Black ~     12 Greenbrier Valley Brewi~ Lewisb~ WV</code></pre>
 <pre class="r"><code># Average ABV by style
 beer_brew %&gt;%
   group_by(style) %&gt;%

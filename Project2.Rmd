@@ -424,7 +424,9 @@ df %>%
               position = position_dodge(width = 0.9),
               vjust = 1.5) +
   ggtitle("Attrition Rates by Environment Satisfaction") +
-  ylab("Proportion")
+  ylab("Proportion") +
+  scale_fill_manual(values=cbPalette)
+ggsave("env.png")
 
 pie2 <- df %>%
   filter(EnvironmentSatisfaction == "1" & Attrition == "Yes")
@@ -902,3 +904,7 @@ salary <- salary %>% select(c("ID","MonthlyIncome"))
 #save file
 Case2PredictionsBall_Salary  <- write.csv(salary, "Case2PredictionsBall_Salary.csv", row.names = FALSE)
 ```
+
+# Video
+
+<a href ="https://youtu.be/E7-DQ4fGkkg"> Video </a>

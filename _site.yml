@@ -6,4 +6,6 @@ navbar:
       href: index.html
     - text: "Beer Study"
       href: ball_farrow_case_study.html
+    - text: "Attrition Rate Study"
+      href: Project2.html
       
