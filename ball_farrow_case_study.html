@@ -1,0 +1,4147 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Megan Ball, Matt Farrow" />
+
+
+<title>6306: Case Study 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">My Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="ball_farrow_case_study.html">Beer Study</a>
+</li>
+<li>
+  <a href="ball_farrow_case_study.html">Attrition Rate Study</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">6306: Case Study 1</h1>
+<h4 class="author">Megan Ball, Matt Farrow</h4>
+
+</div>
+
+
+<p><img src="http://kingoftheflatscreen.com/wp-content/uploads/2015/01/budweiser-logo_1600x1200_83-standard.jpg" width="50%" style="display: block; margin: auto;" /></p>
+<div id="setup" class="section level1">
+<h1>Setup</h1>
+<pre class="r"><code># Load beers and clean column names
+beers &lt;- read_csv(here::here(&quot;data - raw&quot;, &quot;Beers.csv&quot;))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Name = col_character(),
+##   Beer_ID = col_double(),
+##   ABV = col_double(),
+##   IBU = col_double(),
+##   Brewery_id = col_double(),
+##   Style = col_character(),
+##   Ounces = col_double()
+## )</code></pre>
+<pre class="r"><code>beers &lt;- janitor::clean_names(beers)
+
+# Load breweries and clean column names
+breweries &lt;- read_csv(here::here(&quot;data - raw&quot;, &quot;Breweries.csv&quot;))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Brew_ID = col_double(),
+##   Name = col_character(),
+##   City = col_character(),
+##   State = col_character()
+## )</code></pre>
+<pre class="r"><code>breweries &lt;- janitor::clean_names(breweries)
+
+# Define &quot;Budweiser Red&quot;
+bud_red &lt;- &quot;#C8102E&quot;</code></pre>
+<div id="how-many-breweries-are-present-in-each-state" class="section level2">
+<h2>How many breweries are present in each state?</h2>
+<p>In addition to producing a table of the count of breweries in each state, we also created a map to visualize the distribution of breweries around the country.</p>
+<pre class="r"><code># Count the breweries by state
+breweries_by_st &lt;- breweries %&gt;% 
+  count(state) %&gt;% 
+  rename(brewery_count = n,
+         st = state) %&gt;% 
+  mutate(state = tolower(state.name[match(st,state.abb)])) %&gt;% 
+  filter(!is.na(state)) %&gt;% 
+  select(state, brewery_count)
+
+# Merge states map with brewery data
+breweries_by_st_map &lt;- left_join(map_data(&quot;state&quot;), breweries_by_st, by = c(&quot;region&quot; = &quot;state&quot;))
+
+# Create the breweries by state map
+ggplot(breweries_by_st_map, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = brewery_count), color = &quot;white&quot;) +
+  scale_fill_viridis_c(option = &quot;inferno&quot;) +
+  labs(title = &quot;Breweries by State&quot;,
+       fill = &quot;&quot;) +
+  coord_map() +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = &quot;#f3f3f2&quot;),             #F3F3F2 is the color of the PowerPoint slide backgroud for this chart
+    plot.background = element_rect(fill = &quot;#f3f3f2&quot;, color = NA),
+  )</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/breweries-per-state-1.png" width="672" /></p>
+<pre class="r"><code># Save a copy of the map to the images folder
+# ggsave(here::here(&quot;images&quot;, &quot;breweries by state.png&quot;), dpi = &quot;retina&quot;)
+
+# Create a table of the number of breweries by state
+# ⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼
+# Because there isn&#39;t a clean way to wrap columns using the gt() function, we&#39;ve
+# split the data into three separate data sets then bound the columns of each
+# set back together to simulate three columns of data.
+by_st1 &lt;- breweries_by_st %&gt;% 
+  arrange(desc(brewery_count)) %&gt;% 
+  slice(1:17)
+by_st2 &lt;- breweries_by_st %&gt;% 
+  arrange(desc(brewery_count)) %&gt;% 
+  slice(18:34)
+by_st3 &lt;- breweries_by_st %&gt;% 
+  arrange(desc(brewery_count)) %&gt;% 
+  slice(35:51) %&gt;% 
+  add_row()
+bind_cols(by_st1,
+          by_st2,
+          by_st3) %&gt;% 
+  gt() %&gt;% 
+  tab_header(title = &quot;How Many Breweries are Present in Each State?&quot;) %&gt;% 
+  cols_label(`state...1` = &quot;State&quot;,
+             `brewery_count...2` = &quot;Count&quot;,
+             `state...3` = &quot;State&quot;,
+             `brewery_count...4` = &quot;Count&quot;,
+             `state...5` = &quot;State&quot;,
+             `brewery_count...6` = &quot;Count&quot;) %&gt;%
+  {.}</code></pre>
+<pre><code>## New names:
+## * state -&gt; state...1
+## * brewery_count -&gt; brewery_count...2
+## * state -&gt; state...3
+## * brewery_count -&gt; brewery_count...4
+## * state -&gt; state...5
+## * ...</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#wwsykeggeh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wwsykeggeh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wwsykeggeh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wwsykeggeh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wwsykeggeh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wwsykeggeh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wwsykeggeh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wwsykeggeh .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wwsykeggeh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wwsykeggeh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wwsykeggeh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wwsykeggeh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wwsykeggeh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#wwsykeggeh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wwsykeggeh .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wwsykeggeh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wwsykeggeh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wwsykeggeh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wwsykeggeh .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wwsykeggeh .gt_left {
+  text-align: left;
+}
+
+#wwsykeggeh .gt_center {
+  text-align: center;
+}
+
+#wwsykeggeh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wwsykeggeh .gt_font_normal {
+  font-weight: normal;
+}
+
+#wwsykeggeh .gt_font_bold {
+  font-weight: bold;
+}
+
+#wwsykeggeh .gt_font_italic {
+  font-style: italic;
+}
+
+#wwsykeggeh .gt_super {
+  font-size: 65%;
+}
+
+#wwsykeggeh .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="wwsykeggeh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="6" class="gt_heading gt_title gt_font_normal" style>How Many Breweries are Present in Each State?</th>
+    </tr>
+    <tr>
+      <th colspan="6" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">State</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Count</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">State</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Count</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">State</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">colorado</td>
+      <td class="gt_row gt_center">47</td>
+      <td class="gt_row gt_left">arizona</td>
+      <td class="gt_row gt_center">11</td>
+      <td class="gt_row gt_left">new mexico</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">california</td>
+      <td class="gt_row gt_center">39</td>
+      <td class="gt_row gt_left">vermont</td>
+      <td class="gt_row gt_center">10</td>
+      <td class="gt_row gt_left">south carolina</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">michigan</td>
+      <td class="gt_row gt_center">32</td>
+      <td class="gt_row gt_left">maine</td>
+      <td class="gt_row gt_center">9</td>
+      <td class="gt_row gt_left">utah</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">oregon</td>
+      <td class="gt_row gt_center">29</td>
+      <td class="gt_row gt_left">missouri</td>
+      <td class="gt_row gt_center">9</td>
+      <td class="gt_row gt_left">wyoming</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">texas</td>
+      <td class="gt_row gt_center">28</td>
+      <td class="gt_row gt_left">montana</td>
+      <td class="gt_row gt_center">9</td>
+      <td class="gt_row gt_left">alabama</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">pennsylvania</td>
+      <td class="gt_row gt_center">25</td>
+      <td class="gt_row gt_left">connecticut</td>
+      <td class="gt_row gt_center">8</td>
+      <td class="gt_row gt_left">kansas</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">massachusetts</td>
+      <td class="gt_row gt_center">23</td>
+      <td class="gt_row gt_left">alaska</td>
+      <td class="gt_row gt_center">7</td>
+      <td class="gt_row gt_left">new hampshire</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">washington</td>
+      <td class="gt_row gt_center">23</td>
+      <td class="gt_row gt_left">georgia</td>
+      <td class="gt_row gt_center">7</td>
+      <td class="gt_row gt_left">new jersey</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">indiana</td>
+      <td class="gt_row gt_center">22</td>
+      <td class="gt_row gt_left">maryland</td>
+      <td class="gt_row gt_center">7</td>
+      <td class="gt_row gt_left">tennessee</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">wisconsin</td>
+      <td class="gt_row gt_center">20</td>
+      <td class="gt_row gt_left">oklahoma</td>
+      <td class="gt_row gt_center">6</td>
+      <td class="gt_row gt_left">arkansas</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">north carolina</td>
+      <td class="gt_row gt_center">19</td>
+      <td class="gt_row gt_left">iowa</td>
+      <td class="gt_row gt_center">5</td>
+      <td class="gt_row gt_left">delaware</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">illinois</td>
+      <td class="gt_row gt_center">18</td>
+      <td class="gt_row gt_left">idaho</td>
+      <td class="gt_row gt_center">5</td>
+      <td class="gt_row gt_left">mississippi</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">new york</td>
+      <td class="gt_row gt_center">16</td>
+      <td class="gt_row gt_left">louisiana</td>
+      <td class="gt_row gt_center">5</td>
+      <td class="gt_row gt_left">nevada</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">virginia</td>
+      <td class="gt_row gt_center">16</td>
+      <td class="gt_row gt_left">nebraska</td>
+      <td class="gt_row gt_center">5</td>
+      <td class="gt_row gt_left">north dakota</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">florida</td>
+      <td class="gt_row gt_center">15</td>
+      <td class="gt_row gt_left">rhode island</td>
+      <td class="gt_row gt_center">5</td>
+      <td class="gt_row gt_left">south dakota</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ohio</td>
+      <td class="gt_row gt_center">15</td>
+      <td class="gt_row gt_left">hawaii</td>
+      <td class="gt_row gt_center">4</td>
+      <td class="gt_row gt_left">west virginia</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">minnesota</td>
+      <td class="gt_row gt_center">12</td>
+      <td class="gt_row gt_left">kentucky</td>
+      <td class="gt_row gt_center">4</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_center">NA</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<pre class="r"><code># Create a table of the top 10 states for breweries
+breweries %&gt;% 
+  count(state) %&gt;% 
+  arrange(desc(n)) %&gt;%
+  slice(1:10) %&gt;%
+  gt() %&gt;% 
+  tab_header(title = &quot;Top 10 States&quot;) %&gt;% 
+  cols_label(state = &quot;State&quot;,
+             n = &quot;Breweries&quot;) </code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#auyuywgiwj .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#auyuywgiwj .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#auyuywgiwj .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#auyuywgiwj .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#auyuywgiwj .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#auyuywgiwj .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#auyuywgiwj .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#auyuywgiwj .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#auyuywgiwj .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#auyuywgiwj .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#auyuywgiwj .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#auyuywgiwj .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#auyuywgiwj .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#auyuywgiwj .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#auyuywgiwj .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#auyuywgiwj .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#auyuywgiwj .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#auyuywgiwj .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#auyuywgiwj .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#auyuywgiwj .gt_left {
+  text-align: left;
+}
+
+#auyuywgiwj .gt_center {
+  text-align: center;
+}
+
+#auyuywgiwj .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#auyuywgiwj .gt_font_normal {
+  font-weight: normal;
+}
+
+#auyuywgiwj .gt_font_bold {
+  font-weight: bold;
+}
+
+#auyuywgiwj .gt_font_italic {
+  font-style: italic;
+}
+
+#auyuywgiwj .gt_super {
+  font-size: 65%;
+}
+
+#auyuywgiwj .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="auyuywgiwj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style>Top 10 States</th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">State</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Breweries</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">CO</td>
+      <td class="gt_row gt_center">47</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">CA</td>
+      <td class="gt_row gt_center">39</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">MI</td>
+      <td class="gt_row gt_center">32</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">OR</td>
+      <td class="gt_row gt_center">29</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">TX</td>
+      <td class="gt_row gt_center">28</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">PA</td>
+      <td class="gt_row gt_center">25</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">MA</td>
+      <td class="gt_row gt_center">23</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">WA</td>
+      <td class="gt_row gt_center">23</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">IN</td>
+      <td class="gt_row gt_center">22</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">WI</td>
+      <td class="gt_row gt_center">20</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<pre class="r"><code># Create a table of the bottom 10 states for breweries
+breweries %&gt;% 
+  count(state) %&gt;% 
+  arrange(n) %&gt;%
+  slice(1:10) %&gt;%
+  gt() %&gt;% 
+  tab_header(title = &quot;Bottom 10 States&quot;) %&gt;% 
+  cols_label(state = &quot;State&quot;,
+             n = &quot;Breweries&quot;) </code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#emihbllqcn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#emihbllqcn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#emihbllqcn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#emihbllqcn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#emihbllqcn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#emihbllqcn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#emihbllqcn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#emihbllqcn .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#emihbllqcn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#emihbllqcn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#emihbllqcn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#emihbllqcn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#emihbllqcn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#emihbllqcn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#emihbllqcn .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#emihbllqcn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#emihbllqcn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#emihbllqcn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#emihbllqcn .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#emihbllqcn .gt_left {
+  text-align: left;
+}
+
+#emihbllqcn .gt_center {
+  text-align: center;
+}
+
+#emihbllqcn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#emihbllqcn .gt_font_normal {
+  font-weight: normal;
+}
+
+#emihbllqcn .gt_font_bold {
+  font-weight: bold;
+}
+
+#emihbllqcn .gt_font_italic {
+  font-style: italic;
+}
+
+#emihbllqcn .gt_super {
+  font-size: 65%;
+}
+
+#emihbllqcn .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="emihbllqcn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style>Bottom 10 States</th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">State</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Breweries</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">DC</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ND</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">SD</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">WV</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">AR</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">DE</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">MS</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">NV</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">AL</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">KS</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<p>The top three states are Colorado (47), California (39), and Michigan (32). The bottom three states are North Dakota (1), South Dakota (1), and West Virginia (1).</p>
+</div>
+<div id="merge-beer-breweries-data" class="section level2">
+<h2>Merge Beer &amp; Breweries Data</h2>
+<p>After taking a look at the brewery data, we next merged it with the beer data in order to start our analysis of alcohol by volume (ABV) and international bitterness units (IBU). We’ll take a look at the data after we merged it to make sure everything looks ok.</p>
+<pre class="r"><code># Merge the beer and brewery data sets
+beer_brew &lt;- left_join(beers, breweries, by = c(&quot;brewery_id&quot; = &quot;brew_id&quot;))
+
+# Clean up column names post-merge
+beer_brew &lt;- beer_brew %&gt;% 
+  rename(beer_name = name.x,
+         brewery_name = name.y)
+
+# Look at the first six observations
+beer_brew %&gt;% 
+  slice_head(n = 6) %&gt;% 
+  gt() %&gt;% 
+  tab_header(title = &quot;First Six Observations&quot;)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#fuqeyihkza .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fuqeyihkza .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fuqeyihkza .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fuqeyihkza .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fuqeyihkza .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fuqeyihkza .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fuqeyihkza .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fuqeyihkza .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fuqeyihkza .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fuqeyihkza .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fuqeyihkza .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fuqeyihkza .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fuqeyihkza .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#fuqeyihkza .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fuqeyihkza .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fuqeyihkza .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fuqeyihkza .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#fuqeyihkza .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fuqeyihkza .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#fuqeyihkza .gt_left {
+  text-align: left;
+}
+
+#fuqeyihkza .gt_center {
+  text-align: center;
+}
+
+#fuqeyihkza .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fuqeyihkza .gt_font_normal {
+  font-weight: normal;
+}
+
+#fuqeyihkza .gt_font_bold {
+  font-weight: bold;
+}
+
+#fuqeyihkza .gt_font_italic {
+  font-style: italic;
+}
+
+#fuqeyihkza .gt_super {
+  font-size: 65%;
+}
+
+#fuqeyihkza .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="fuqeyihkza" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="10" class="gt_heading gt_title gt_font_normal" style>First Six Observations</th>
+    </tr>
+    <tr>
+      <th colspan="10" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">beer_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">beer_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">abv</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ibu</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">brewery_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">style</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ounces</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">brewery_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">city</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">state</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Pub Beer</td>
+      <td class="gt_row gt_right">1436</td>
+      <td class="gt_row gt_right">0.050</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">409</td>
+      <td class="gt_row gt_left">American Pale Lager</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">10 Barrel Brewing Company</td>
+      <td class="gt_row gt_left">Bend</td>
+      <td class="gt_row gt_left">OR</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Devil's Cup</td>
+      <td class="gt_row gt_right">2265</td>
+      <td class="gt_row gt_right">0.066</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">178</td>
+      <td class="gt_row gt_left">American Pale Ale (APA)</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">18th Street Brewery</td>
+      <td class="gt_row gt_left">Gary</td>
+      <td class="gt_row gt_left">IN</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Rise of the Phoenix</td>
+      <td class="gt_row gt_right">2264</td>
+      <td class="gt_row gt_right">0.071</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">178</td>
+      <td class="gt_row gt_left">American IPA</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">18th Street Brewery</td>
+      <td class="gt_row gt_left">Gary</td>
+      <td class="gt_row gt_left">IN</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Sinister</td>
+      <td class="gt_row gt_right">2263</td>
+      <td class="gt_row gt_right">0.090</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">178</td>
+      <td class="gt_row gt_left">American Double / Imperial IPA</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">18th Street Brewery</td>
+      <td class="gt_row gt_left">Gary</td>
+      <td class="gt_row gt_left">IN</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Sex and Candy</td>
+      <td class="gt_row gt_right">2262</td>
+      <td class="gt_row gt_right">0.075</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">178</td>
+      <td class="gt_row gt_left">American IPA</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">18th Street Brewery</td>
+      <td class="gt_row gt_left">Gary</td>
+      <td class="gt_row gt_left">IN</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Black Exodus</td>
+      <td class="gt_row gt_right">2261</td>
+      <td class="gt_row gt_right">0.077</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">178</td>
+      <td class="gt_row gt_left">Oatmeal Stout</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">18th Street Brewery</td>
+      <td class="gt_row gt_left">Gary</td>
+      <td class="gt_row gt_left">IN</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<pre class="r"><code># Look at the last six observations
+beer_brew %&gt;% 
+  slice_tail(n = 6) %&gt;% 
+  gt() %&gt;% 
+  tab_header(title = &quot;Last Six Observations&quot;)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ymbkwxraoh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ymbkwxraoh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ymbkwxraoh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ymbkwxraoh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ymbkwxraoh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ymbkwxraoh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ymbkwxraoh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ymbkwxraoh .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ymbkwxraoh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ymbkwxraoh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ymbkwxraoh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ymbkwxraoh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ymbkwxraoh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ymbkwxraoh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ymbkwxraoh .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ymbkwxraoh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ymbkwxraoh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ymbkwxraoh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ymbkwxraoh .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ymbkwxraoh .gt_left {
+  text-align: left;
+}
+
+#ymbkwxraoh .gt_center {
+  text-align: center;
+}
+
+#ymbkwxraoh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ymbkwxraoh .gt_font_normal {
+  font-weight: normal;
+}
+
+#ymbkwxraoh .gt_font_bold {
+  font-weight: bold;
+}
+
+#ymbkwxraoh .gt_font_italic {
+  font-style: italic;
+}
+
+#ymbkwxraoh .gt_super {
+  font-size: 65%;
+}
+
+#ymbkwxraoh .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="ymbkwxraoh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="10" class="gt_heading gt_title gt_font_normal" style>Last Six Observations</th>
+    </tr>
+    <tr>
+      <th colspan="10" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">beer_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">beer_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">abv</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ibu</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">brewery_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">style</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">ounces</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">brewery_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">city</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">state</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Rocky Mountain Oyster Stout</td>
+      <td class="gt_row gt_right">1035</td>
+      <td class="gt_row gt_right">0.075</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">American Stout</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Belgorado</td>
+      <td class="gt_row gt_right">928</td>
+      <td class="gt_row gt_right">0.067</td>
+      <td class="gt_row gt_right">45</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">Belgian IPA</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Rail Yard Ale</td>
+      <td class="gt_row gt_right">807</td>
+      <td class="gt_row gt_right">0.052</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">American Amber / Red Ale</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">B3K Black Lager</td>
+      <td class="gt_row gt_right">620</td>
+      <td class="gt_row gt_right">0.055</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">Schwarzbier</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Silverback Pale Ale</td>
+      <td class="gt_row gt_right">145</td>
+      <td class="gt_row gt_right">0.055</td>
+      <td class="gt_row gt_right">40</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">American Pale Ale (APA)</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Rail Yard Ale (2009)</td>
+      <td class="gt_row gt_right">84</td>
+      <td class="gt_row gt_right">0.052</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">425</td>
+      <td class="gt_row gt_left">American Amber / Red Ale</td>
+      <td class="gt_row gt_right">12</td>
+      <td class="gt_row gt_left">Wynkoop Brewing Company</td>
+      <td class="gt_row gt_left">Denver</td>
+      <td class="gt_row gt_left">CO</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+</div>
+<div id="address-missing-values" class="section level2">
+<h2>Address Missing Values</h2>
+<p>Now that the data was successfully merged together, we began the process of investigating and addressing the missing values in the data set. Unfortunately there are a number of missing values, particularly when it comes to ABV and IBU. After examining the histograms for those two variables, we made two decisions. The first was to exclude cider and mead from the analysis because they are not beer. The second was to impute the mean ABV and IBU value by beer style for all missing values of those variables. We felt that offered the best balance between not losing observations and staying true to the beer’s style. Our final task for this question was to simply remove any remaining observations with missing values.</p>
+<pre class="r"><code># How many missing values do we currently have in the data?
+colSums(is.na(beer_brew))</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0           62         1005            0            5            0            0            0 
+##        state 
+##            0</code></pre>
+<pre class="r"><code># What is the distribution of ABV and IBU before imputation?
+hist(beer_brew$abv)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/address-na-1.png" width="672" /></p>
+<pre class="r"><code>hist(beer_brew$ibu)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/address-na-2.png" width="672" /></p>
+<pre class="r"><code># Check which styles are NA for ABV and IBU
+filter(beer_brew, ibu == &quot;NaN&quot;)</code></pre>
+<pre><code>## # A tibble: 0 x 10
+## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;, style &lt;chr&gt;,
+## #   ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
+<pre class="r"><code>filter(beer_brew, abv == &quot;NaN&quot;)</code></pre>
+<pre><code>## # A tibble: 0 x 10
+## # ... with 10 variables: beer_name &lt;chr&gt;, beer_id &lt;dbl&gt;, abv &lt;dbl&gt;, ibu &lt;dbl&gt;, brewery_id &lt;dbl&gt;, style &lt;chr&gt;,
+## #   ounces &lt;dbl&gt;, brewery_name &lt;chr&gt;, city &lt;chr&gt;, state &lt;chr&gt;</code></pre>
+<pre class="r"><code># Get rid of cider and mead because they are not beer
+beer_brew &lt;- beer_brew %&gt;%
+  filter((style != &quot;Cider&quot;) &amp; (style != &quot;Mead&quot;))
+  
+# Create a function to impute the mean
+impute_mean &lt;- function(x) {
+  ind_na &lt;- is.na(x)
+  x[ind_na] &lt;- mean(x[!ind_na])
+  as.numeric(x)
+}
+
+# Calculate mean IBU &amp; ABV
+beer_brew &lt;- beer_brew %&gt;% 
+  group_by(style) %&gt;% 
+  mutate_at(vars(ibu, abv), impute_mean) %&gt;% 
+  ungroup()
+
+# Distribution of ABV and IBU after imputation
+hist(beer_brew$abv)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/address-na-3.png" width="672" /></p>
+<pre class="r"><code>hist(beer_brew$ibu)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/address-na-4.png" width="672" /></p>
+<pre class="r"><code># Check for any remaining NA
+colSums(is.na(beer_brew))</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0            0           10            0            0            0            0            0 
+##        state 
+##            0</code></pre>
+<pre class="r"><code># Still a stubborn 10 rows that are NA - this is because these styles don&#39;t have
+# IBU. Remove these rows
+beer_brew &lt;- beer_brew %&gt;% 
+  drop_na(ibu)
+
+# Check for any remaining NA
+colSums(is.na(beer_brew))</code></pre>
+<pre><code>##    beer_name      beer_id          abv          ibu   brewery_id        style       ounces brewery_name         city 
+##            0            0            0            0            0            0            0            0            0 
+##        state 
+##            0</code></pre>
+</div>
+<div id="median-abv-ibu" class="section level2">
+<h2>Median ABV &amp; IBU</h2>
+<p>Using our merged data, we created a new data set to investigate the distribution of median ABV and IBU by state. For this question we made the decision to use histograms that were arranged in descending order from largest median to the smallest.</p>
+<pre class="r"><code># Median ABV &amp; IBU
+median_abv_ibu &lt;- beer_brew %&gt;% 
+  filter(state != &quot;DC&quot;) %&gt;% 
+  group_by(state) %&gt;% 
+  summarise(median_abv = median(abv, na.rm = TRUE),
+            median_ibu = median(ibu, na.rm = TRUE)) %&gt;% 
+  rename(st = state) %&gt;% 
+  mutate(state = tolower(state.name[match(st,state.abb)]),
+         median_abv_per = median_abv * 100) %&gt;% 
+  ungroup() %&gt;% 
+  pivot_longer(cols = c(3,5), names_to = &quot;measure&quot;)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code># ABV Histogram
+median_abv_ibu %&gt;%
+  filter(measure == &quot;median_abv_per&quot;) %&gt;%
+  ggplot(aes(x = reorder(state, -value), y = value)) +
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;darkolivegreen4&quot;) +
+  labs(title =&quot;Median Alcohol by Volume for Each State&quot;,
+       x = &quot;State&quot;,
+       y = &quot;ABV (%)&quot;) +
+  scale_x_discrete(guide = guide_axis(angle = 90))  +
+  theme_minimal() +
+  NULL</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/median-abv-ibu-1.png" width="672" /></p>
+<pre class="r"><code># Save the ABV histogram to the images folder
+# ggsave(
+#   here::here(&quot;images&quot;, &quot;median abv by state.png&quot;),
+#   dpi = &quot;retina&quot;,
+#   width = 10,
+#   height = 3,
+#   units = &quot;in&quot;
+# )
+
+# IBU Histogram
+median_abv_ibu %&gt;%
+  filter(measure == &quot;median_ibu&quot;) %&gt;%
+  ggplot(aes(x = reorder(state, -value), y = value)) +
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;goldenrod1&quot;) +
+  labs(title =&quot;Median IBU for Each State&quot;,
+       x = &quot;State&quot;,
+       y = &quot;IBU&quot;) +
+  scale_x_discrete(guide = guide_axis(angle = 90))  +
+  theme_minimal() +
+  NULL</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/median-abv-ibu-2.png" width="672" /></p>
+<pre class="r"><code># Save the ABV histogram to the images folder
+# ggsave(
+#   here::here(&quot;images&quot;, &quot;median ibu by state.png&quot;),
+#   dpi = &quot;retina&quot;,
+#   width = 10,
+#   height = 3,
+#   units = &quot;in&quot;
+# )</code></pre>
+<p>Delaware and West Virginia have the highest median IBU, but only include two beers per state. After that, Minnesota has the highest median IBU at 45 and includes a total of 12 breweries.</p>
+<p>Kentucky has the highest median ABV at 6.5%.</p>
+<div id="mapping-the-data-instead" class="section level3">
+<h3>Mapping the Data Instead</h3>
+<p>While the histograms offer a quick look at the median distribution and an assessment of which state has the highest and lowest median values, we also thought it would be interesting to once again map the data to see if there were regional trends that might be hiding in the data.</p>
+<pre class="r"><code># Re-make the median_abv_ibu data set without the pivot longer and highlights
+median_abv_ibu &lt;- beer_brew %&gt;% 
+  filter(state != &quot;DC&quot;) %&gt;% 
+  group_by(state) %&gt;% 
+  summarise(median_abv = median(abv, na.rm = TRUE),
+            median_ibu = median(ibu, na.rm = TRUE)) %&gt;% 
+  rename(st = state) %&gt;% 
+  mutate(state = tolower(state.name[match(st,state.abb)]),
+         median_abv_per = median_abv * 100)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code># Merge the state and beer data together
+median_map &lt;- left_join(map_data(&quot;state&quot;), median_abv_ibu, by = c(&quot;region&quot; = &quot;state&quot;))
+
+# Use the map function to get the polygon data, then find the centroids
+state_poly &lt;- maps::map(&quot;state&quot;,  plot=FALSE, fill = TRUE)
+
+# Define state centroids to plot values on states
+state_centroids &lt;- maps:::apply.polygon(state_poly, maps:::centroid.polygon)
+
+# Create a data frame for graphing out of the centroids of each polygon
+# with a non-missing name
+state_centroids &lt;- state_centroids[!is.na(names(state_centroids))]
+centroid_array &lt;- Reduce(rbind, state_centroids)
+dimnames(centroid_array) &lt;-
+  list(gsub(&quot;[^,]*,&quot;, &quot;&quot;, names(state_centroids)),
+       c(&quot;long&quot;, &quot;lat&quot;))
+label_df &lt;- as.data.frame(centroid_array)
+label_df$state &lt;- rownames(label_df)
+
+# Remove extra names
+label_df &lt;- label_df[-c(20, 22, 34, 36, 37, 38, 40, 53, 54, 56, 57, 58, 59), ]
+
+# Remove subregion 
+label_df$state &lt;- str_extract(label_df$state, &quot;[a-z ]+&quot;)
+
+# Join label data with median_abv_ibu value
+median_map_label &lt;- left_join(label_df, median_abv_ibu, by = c(&quot;state&quot; = &quot;state&quot;))
+
+# Create a map of median IBU by state with value
+ggplot(median_map, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = median_ibu), color = &quot;white&quot;) +
+  geom_text(data = median_map_label,
+            aes(label = round(median_ibu, digits = 1), group = state),
+            size = 3) +
+  scale_fill_viridis_c() +
+  labs(title = &quot;Median IBU by State&quot;,
+       fill = &quot;Median IBU&quot;) +
+  guides(fill = FALSE) +
+  coord_map() +
+  theme_void()</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># Save the map to the images folder
+# ggsave(here::here(&quot;images&quot;, &quot;median ibu by state map.png&quot;), dpi = &quot;retina&quot;)
+
+# Create a map of median ABV by state with value
+ggplot(median_map, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = median_abv), color = &quot;white&quot;) +
+  geom_text(data = median_map_label,
+            aes(label = round(median_abv_per, digits = 1), group =
+                  state),
+            size = 2.75) +
+  scale_fill_viridis_c() +
+  labs(title = &quot;Median ABV by State&quot;,
+       fill = &quot;Median ABV (%)&quot;) +
+  guides(fill = FALSE) +
+  coord_map() +
+  theme_void()</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<pre class="r"><code># Save the map to the images folder
+# ggsave(here::here(&quot;images&quot;, &quot;median abv by state map.png&quot;), dpi = &quot;retina&quot;)
+
+#which are the high IBU beers in DE, WV
+beer_brew %&gt;% 
+  filter(state == &quot;DE&quot; | state == &quot;WV&quot;)</code></pre>
+<pre><code>## # A tibble: 4 x 10
+##   beer_name        beer_id    abv   ibu brewery_id style             ounces brewery_name               city     state
+##   &lt;chr&gt;              &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;                      &lt;chr&gt;    &lt;chr&gt;
+## 1 Wild Trail Pale~    2314 0.057   44          157 American Pale Al~     12 Greenbrier Valley Brewing~ Lewisbu~ WV   
+## 2 Mothman Black I~    2313 0.067   71          157 American Black A~     12 Greenbrier Valley Brewing~ Lewisbu~ WV   
+## 3 Appreciation Ale    1784 0.0645  67.6        317 American IPA          16 Iron Hill Brewery &amp; Resta~ Wilming~ DE   
+## 4 Greenville Pale~     433 0.055   52          540 American Pale Al~     12 Twin Lakes Brewing Company Greenvi~ DE</code></pre>
+<pre class="r"><code>#which are the low &amp; high ABV beers in UT, WV
+beer_brew %&gt;% 
+  filter(state == &quot;UT&quot; | state == &quot;WV&quot;)</code></pre>
+<pre><code>## # A tibble: 28 x 10
+##    beer_name           beer_id   abv   ibu brewery_id style              ounces brewery_name            city    state
+##    &lt;chr&gt;                 &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;                   &lt;chr&gt;   &lt;chr&gt;
+##  1 Bohemian Export La~    1607 0.06   23.8        365 Dortmunder / Expo~     12 Bohemian Brewery        Midvale UT   
+##  2 Altus Bohemes Altb~    1597 0.053  34.1        365 Altbier                12 Bohemian Brewery        Midvale UT   
+##  3 Cherny Bock             344 0.04   31          365 Schwarzbier            12 Bohemian Brewery        Midvale UT   
+##  4 Czech Pilsner            89 0.05   33.8        365 Czech Pilsener         12 Bohemian Brewery        Midvale UT   
+##  5 Viennese Lager           88 0.05   24.4        365 Vienna Lager           12 Bohemian Brewery        Midvale UT   
+##  6 Wild Trail Pale Ale    2314 0.057  44          157 American Pale Ale~     12 Greenbrier Valley Brew~ Lewisb~ WV   
+##  7 Mothman Black IPA      2313 0.067  71          157 American Black Ale     12 Greenbrier Valley Brew~ Lewisb~ WV   
+##  8 Squeaky Bike Nut B~    1476 0.04   29.9        400 American Brown Ale     16 Moab Brewery            Moab    UT   
+##  9 Dead Horse Amber        902 0.04   20.7        400 American Pale Whe~     16 Moab Brewery            Moab    UT   
+## 10 Rocket Bike Americ~     645 0.04   41          400 California Common~     16 Moab Brewery            Moab    UT   
+## # ... with 18 more rows</code></pre>
+</div>
+</div>
+<div id="max-abv-ibu" class="section level2">
+<h2>Max ABV &amp; IBU</h2>
+<p>To determine which beer had the highest ABV and IBU, respectively, we arranged the data set in descending order by the desired variable and kept only the top record. The state with the highest ABV was Colorado and the state with the highest IBU was Oregon.</p>
+<pre class="r"><code># Highest ABV
+beer_brew %&gt;% 
+  arrange(desc(abv)) %&gt;% 
+  filter(row_number() == 1)</code></pre>
+<pre><code>## # A tibble: 1 x 10
+##   beer_name                         beer_id   abv   ibu brewery_id style       ounces brewery_name       city   state
+##   &lt;chr&gt;                               &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;
+## 1 Lee Hill Series Vol. 5 - Belgian~    2565 0.128    24         52 Quadrupel ~   19.2 Upslope Brewing C~ Bould~ CO</code></pre>
+<pre class="r"><code># Highest IBU
+beer_brew %&gt;% 
+  arrange(desc(ibu)) %&gt;% 
+  filter(row_number() == 1)</code></pre>
+<pre><code>## # A tibble: 1 x 10
+##   beer_name            beer_id   abv   ibu brewery_id style                   ounces brewery_name        city   state
+##   &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;                    &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;  &lt;chr&gt;
+## 1 Bitter Bitch Imperi~     980 0.082   138        375 American Double / Impe~     12 Astoria Brewing Co~ Astor~ OR</code></pre>
+</div>
+<div id="abv-summary-stats-and-distribution" class="section level2">
+<h2>ABV Summary Stats and Distribution</h2>
+<p>Comment on the summary statistics and distribution of the ABV variable.</p>
+<pre class="r"><code># Histogram of ABV
+beer_brew %&gt;%
+  ggplot(aes(x = abv)) +
+  geom_histogram(fill = bud_red, color = &quot;gray90&quot;) +
+  scale_x_continuous(label = percent) +
+  ggtitle(&quot;Distribution of ABV&quot;) +
+  theme_minimal()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># Boxplot of ABV
+beer_brew %&gt;%
+  ggplot(aes(x = abv)) +
+  geom_boxplot(
+    outlier.colour = &quot;red&quot;,
+    outlier.shape = 8,
+    outlier.size = 2,
+    fill = bud_red
+  ) +
+  ggtitle(&quot;Distribution of ABV&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<p>ABV ranges for the most part ranges between 2.5 to 10%. Most of the beers in our data set fall between 5 and 6%. There are three outliers at 12%, 12.5%, and 12.8%.</p>
+</div>
+<div id="is-there-a-relationship-between-ibu-and-abv" class="section level2">
+<h2>Is there a relationship between IBU and ABV?</h2>
+<p>Is there an apparent relationship between the bitterness of the beer and its alcoholic content? Draw a scatter plot. Make your best judgment of a relationship and EXPLAIN your answer.</p>
+<pre class="r"><code># Create a scatter plot of ABV and IBU
+beer_brew %&gt;%
+  ggplot(aes(x = ibu, y = abv)) +
+  geom_jitter(alpha = 0.5, color = &quot;#044389&quot;) +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(title = &quot;Is there a relationship Between ABV and IBU?&quot;,
+       x = &quot;IBU&quot;,
+       y = &quot;ABV&quot;) +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = &quot;#f3f3f2&quot;),
+    plot.background = element_rect(fill = &quot;#f3f3f2&quot;, color = NA),
+  )</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code># Save the plot to the images folder
+# ggsave(here::here(&quot;images&quot;, &quot;abv and ibu relationship.png&quot;), dpi = &quot;retina&quot;)</code></pre>
+<p>There does appear to be some quantifiable relationship between IBU and ABV. In general, as IBU increases, ABV appears to increase as well.</p>
+</div>
+<div id="knn" class="section level2">
+<h2>KNN</h2>
+<p>Budweiser would also like to investigate the difference with respect to IBU and ABV between IPAs (India Pale Ales) and other types of Ale (any beer with “Ale” in its name other than IPA). You decide to use KNN classification to investigate this relationship. Provide statistical evidence one way or the other. You can of course assume your audience is comfortable with percentages…KNN is very easy to understand conceptually.</p>
+<p>In addition, while you have decided to use KNN to investigate this relationship (KNN is required) you may also feel free to supplement your response to this question with any other methods or techniques you have learned. Creativity and alternative solutions are always encouraged.</p>
+<pre class="r"><code># Create data set of beers whose style contains only &quot;IPA&quot; or &quot;Ale&quot;
+ipa_ale &lt;- beer_brew %&gt;% 
+  mutate(style2 = as_factor(case_when(str_detect(style, &quot;IPA&quot;) ~ &quot;IPA&quot;,
+                                      str_detect(style, &quot;ale&quot;) ~ &quot;Ale&quot;))) %&gt;% 
+  filter(!is.na(style2)) %&gt;% 
+  select(style2,
+         abv,
+         ibu)
+
+# Create a new standardized data set for knn
+ipa_ale$abv_std &lt;- standardize(ipa_ale$abv, centerFun = mean, scaleFun = sd)
+ipa_ale$ibu_std &lt;- standardize(ipa_ale$ibu, centerFun = mean, scaleFun = sd)
+
+# Set seed
+set.seed(123)
+
+# Find the optimum k for predicting beer type based on IBU and ABV
+# ⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼⎼
+# Set the number of iterations
+iterations &lt;- 100
+
+# Set the number of K&#39;s to test
+numks &lt;- 30
+
+# Create a blank matrix for holding for loop results
+masterAcc &lt;- matrix(nrow = iterations, ncol = numks)
+
+# For loop to split the data into training and testing sets, run a KNN on each
+# value of K, create a confusion matrix and add the results to our previously
+# created blank matrix
+for (j in 1:iterations) {
+  trainInd &lt;- sample(1:dim(ipa_ale)[1], round(0.75 * dim(ipa_ale)[1]))
+  train &lt;- ipa_ale[trainInd, ]
+  test &lt;- ipa_ale[-trainInd, ]
+  
+  for (i in 1:numks)
+  {
+    classifications &lt;-
+      knn(
+        train[, c(2, 3)],
+        test[, c(2, 3)],
+        train$style2,
+        prob = TRUE,
+        k = i,
+        use.all = TRUE
+      )
+    CM &lt;- confusionMatrix(table(classifications, test$style2))
+    masterAcc[j, i] &lt;- CM$overall[1]
+  }
+}
+
+# Calculate the column means
+MeanAcc &lt;- colMeans(masterAcc)
+
+# Plot results
+plot(seq(1, numks, 1), MeanAcc, type = &quot;l&quot;)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code># Which K was most successful.
+which.max(MeanAcc)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>Based on this look for 30 different k’s, we see the optimum accuracy is at k = 3.</p>
+<pre class="r"><code># Run the KNN model with our optimum k
+trainInd &lt;- sample(1:dim(ipa_ale)[1], round(0.75 * dim(ipa_ale)[1]))
+train &lt;- ipa_ale[trainInd,]
+test &lt;- ipa_ale[-trainInd,]
+knn_model &lt;- knn(train[, c(2, 3)], test[, c(2, 3)], train$style2, k = 3)
+CM &lt;- confusionMatrix(knn_model, test$style2)
+CM</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction Ale IPA
+##        Ale 107  18
+##        IPA   9 117
+##                                           
+##                Accuracy : 0.8924          
+##                  95% CI : (0.8474, 0.9279)
+##     No Information Rate : 0.5378          
+##     P-Value [Acc &gt; NIR] : &lt;2e-16          
+##                                           
+##                   Kappa : 0.7848          
+##                                           
+##  Mcnemar&#39;s Test P-Value : 0.1237          
+##                                           
+##             Sensitivity : 0.9224          
+##             Specificity : 0.8667          
+##          Pos Pred Value : 0.8560          
+##          Neg Pred Value : 0.9286          
+##              Prevalence : 0.4622          
+##          Detection Rate : 0.4263          
+##    Detection Prevalence : 0.4980          
+##       Balanced Accuracy : 0.8945          
+##                                           
+##        &#39;Positive&#39; Class : Ale             
+## </code></pre>
+</div>
+<div id="knock-their-socks-off" class="section level2">
+<h2>Knock Their Socks Off</h2>
+<p>As we explored IBU, we noticed that the higher median IBU values tended to fall around the coasts and major metropolitan areas. That got us thinking about the relative dearth of hoppy, higher-IBU beer across much of the middle of the country and the opportunity that presents you with at Budweiser. Your brand power, trusted reputation for quality, and your distribution pipeline have placed you in an ideal position to beginn capitalizing on the popularity that higher IBU beers have begun to enjoy.</p>
+<pre class="r"><code>explore &lt;- beer_brew %&gt;% 
+  mutate(style2 = as_factor(case_when(str_detect(style, &quot;IPA&quot;) ~ &quot;IPA&quot;,
+                                      str_detect(style, &quot;ale&quot;) ~ &quot;Ale&quot;))) %&gt;% 
+  filter(style2 == &quot;IPA&quot;) %&gt;% 
+  count(state) %&gt;% 
+  rename(st = state,
+         ipas = n) %&gt;% 
+  mutate(region = tolower(state.name[match(st,state.abb)])) 
+
+explore &lt;- left_join(map_data(&quot;state&quot;), explore)</code></pre>
+<pre><code>## Joining, by = &quot;region&quot;</code></pre>
+<pre class="r"><code>explore$ipas[is.na(explore$ipas)] &lt;- 0
+
+explore %&gt;%
+  mutate(ipa_potential = if_else(ipas &lt; 10, &quot;High&quot;, &quot;Low&quot;)) %&gt;%
+  ggplot(aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = ipa_potential), color = &quot;gray30&quot;) +
+  scale_fill_manual(values = c(&quot;#ffdf00&quot;, alpha(&quot;gray90&quot;, 0.5))) +
+  labs(title = &quot;Middle America Offers IPA Market&quot;,
+       subtitle = &quot;few craft brew selections present an untapped market&quot;,
+       fill = &quot;Potential&quot;) +
+  coord_map() +
+  theme_void() #+</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>  theme(
+  panel.background = element_rect(fill = &quot;#f3f3f2&quot;),
+    # bg of the panel
+    plot.background = element_rect(fill = &quot;#f3f3f2&quot;, color = NA),
+    # bg of the plot
+    legend.position = &quot;bottom&quot;)</code></pre>
+<pre><code>## List of 3
+##  $ legend.position : chr &quot;bottom&quot;
+##  $ panel.background:List of 5
+##   ..$ fill         : chr &quot;#f3f3f2&quot;
+##   ..$ colour       : NULL
+##   ..$ size         : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;element_rect&quot; &quot;element&quot;
+##  $ plot.background :List of 5
+##   ..$ fill         : chr &quot;#f3f3f2&quot;
+##   ..$ colour       : logi NA
+##   ..$ size         : NULL
+##   ..$ linetype     : NULL
+##   ..$ inherit.blank: logi FALSE
+##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;element_rect&quot; &quot;element&quot;
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;theme&quot; &quot;gg&quot;
+##  - attr(*, &quot;complete&quot;)= logi FALSE
+##  - attr(*, &quot;validate&quot;)= logi TRUE</code></pre>
+<pre class="r"><code># ggsave(here::here(&quot;images&quot;, &quot;ipa potential.png&quot;), dpi = &quot;retina&quot;)</code></pre>
+</div>
+<div id="additional-exploration" class="section level2">
+<h2>Additional Exploration</h2>
+<p>The following are additional explorations that we considered for the questions in this analysis. We opted to include it to show our thought process as well as provide ideas for future exploration.</p>
+<pre class="r"><code># Additional EDA with size and ABV
+beer_brew %&gt;%
+  ggplot(aes(x = ounces, y = abv)) +
+  geom_jitter(alpha = 0.5) +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(
+    title = &quot;Is there a relationship Between ABV and size?&quot;,
+    x = &quot;Ounces&quot;,
+    y = &quot;ABV&quot;
+  ) +
+  theme_minimal()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code># All of the beer styles
+beer_brew$style &lt;- as.factor(beer_brew$style)
+
+# Most popular styles
+beer_brew %&gt;%
+  count(style) %&gt;%
+  rename(style_count = n) %&gt;%
+  arrange(desc(style_count))</code></pre>
+<pre><code>## # A tibble: 90 x 2
+##    style                          style_count
+##    &lt;fct&gt;                                &lt;int&gt;
+##  1 American IPA                           424
+##  2 American Pale Ale (APA)                245
+##  3 American Amber / Red Ale               133
+##  4 American Blonde Ale                    108
+##  5 American Double / Imperial IPA         105
+##  6 American Pale Wheat Ale                 97
+##  7 American Brown Ale                      70
+##  8 American Porter                         68
+##  9 Saison / Farmhouse Ale                  52
+## 10 Witbier                                 51
+## # ... with 80 more rows</code></pre>
+<pre class="r"><code># Plot bar graph of styles - adapted from Kaggle code
+beer_brew %&gt;% 
+  group_by(style) %&gt;% # Group by the beer style
+  summarise(count = n()) %&gt;% # Count per group
+  filter(count &gt; 25) %&gt;% # Only the larger groups
+  ggplot(aes(reorder(style, count), count)) + # Reorder the bars
+  geom_col(fill = &#39;#C8102E&#39;) + 
+  labs(
+    title = &quot;Top Beer Styles in the US&quot;,
+    x = &quot;Style&quot;,
+    y = &quot;Count&quot;
+  ) +
+  theme_minimal() + 
+  coord_flip()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre class="r"><code># What are the beers in Utah?
+beer_brew %&gt;%
+  filter(state == &quot;UT&quot;)</code></pre>
+<pre><code>## # A tibble: 26 x 10
+##    beer_name            beer_id   abv   ibu brewery_id style                ounces brewery_name      city       state
+##    &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;      &lt;chr&gt;
+##  1 Bohemian Export Lag~    1607 0.06   23.8        365 Dortmunder / Export~     12 Bohemian Brewery  Midvale    UT   
+##  2 Altus Bohemes Altbi~    1597 0.053  34.1        365 Altbier                  12 Bohemian Brewery  Midvale    UT   
+##  3 Cherny Bock              344 0.04   31          365 Schwarzbier              12 Bohemian Brewery  Midvale    UT   
+##  4 Czech Pilsner             89 0.05   33.8        365 Czech Pilsener           12 Bohemian Brewery  Midvale    UT   
+##  5 Viennese Lager            88 0.05   24.4        365 Vienna Lager             12 Bohemian Brewery  Midvale    UT   
+##  6 Squeaky Bike Nut Br~    1476 0.04   29.9        400 American Brown Ale       16 Moab Brewery      Moab       UT   
+##  7 Dead Horse Amber         902 0.04   20.7        400 American Pale Wheat~     16 Moab Brewery      Moab       UT   
+##  8 Rocket Bike America~     645 0.04   41          400 California Common /~     16 Moab Brewery      Moab       UT   
+##  9 Johnny&#39;s American I~     644 0.04   67.6        400 American IPA             16 Moab Brewery      Moab       UT   
+## 10 PUNK&#39;N                  2310 0.05   10          160 Pumpkin Ale              12 Uinta Brewing Co~ Salt Lake~ UT   
+## # ... with 16 more rows</code></pre>
+<pre class="r"><code># 26 total beers, three cities: Midvale, Moab, SLC
+
+# What are the beer styles in Utah?
+beer_brew %&gt;%
+  filter(state == &quot;UT&quot;) %&gt;%
+  count(style) %&gt;%
+  rename(style_count = n) %&gt;%
+  arrange(desc(style_count)) %&gt;%
+  gt() %&gt;%
+  tab_header(title = &quot;Beer Styles in Utah&quot;)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#wgpquakemq .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wgpquakemq .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wgpquakemq .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wgpquakemq .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wgpquakemq .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wgpquakemq .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wgpquakemq .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wgpquakemq .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wgpquakemq .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wgpquakemq .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wgpquakemq .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wgpquakemq .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wgpquakemq .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#wgpquakemq .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wgpquakemq .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wgpquakemq .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wgpquakemq .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wgpquakemq .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wgpquakemq .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wgpquakemq .gt_left {
+  text-align: left;
+}
+
+#wgpquakemq .gt_center {
+  text-align: center;
+}
+
+#wgpquakemq .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wgpquakemq .gt_font_normal {
+  font-weight: normal;
+}
+
+#wgpquakemq .gt_font_bold {
+  font-weight: bold;
+}
+
+#wgpquakemq .gt_font_italic {
+  font-style: italic;
+}
+
+#wgpquakemq .gt_super {
+  font-size: 65%;
+}
+
+#wgpquakemq .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="wgpquakemq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style>Beer Styles in Utah</th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">style</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">style_count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">American IPA</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Pale Ale (APA)</td>
+      <td class="gt_row gt_center">4</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Double / Imperial IPA</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American White IPA</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Schwarzbier</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Altbier</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Amber / Red Lager</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Blonde Ale</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Brown Ale</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Pale Wheat Ale</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">California Common / Steam Beer</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Czech Pilsener</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Doppelbock</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Dortmunder / Export Lager</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Fruit / Vegetable Beer</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Pumpkin Ale</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Vienna Lager</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+<pre class="r"><code># What are the beers in the states with only one brewery (ND, SD, WV)
+beer_brew %&gt;%
+  filter(state == &quot;ND&quot; | state == &quot;SD&quot; | state == &quot;WV&quot;)</code></pre>
+<pre><code>## # A tibble: 12 x 10
+##    beer_name            beer_id   abv   ibu brewery_id style            ounces brewery_name             city    state
+##    &lt;chr&gt;                  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;             &lt;dbl&gt; &lt;chr&gt;                    &lt;chr&gt;   &lt;chr&gt;
+##  1 Red Water Irish Sty~    2145 0.065  36.3        213 American Amber ~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  2 Mjöllnir                1804 0.066  22.2        213 Herbed / Spiced~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  3 Bear Butte Nut Brow~    1602 0.055  29.9        213 American Brown ~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  4 Easy Livin&#39; Summer ~    1301 0.045  21.0        213 American Blonde~     12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  5 Canyon Cream Ale         542 0.055  20.3        213 Cream Ale            12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  6 Pile O&#39;Dirt Porter       272 0.069  31.9        213 American Porter      12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  7 11th Hour IPA            271 0.06   67.6        213 American IPA         12 Crow Peak Brewing Compa~ Spearf~ SD   
+##  8 Iron Horse Pale Ale     1722 0.05   32          336 American Pale A~     12 Fargo Brewing Company    Fargo   ND   
+##  9 Stone&#39;s Throw IPA       1435 0.045  19          336 Scottish Ale         12 Fargo Brewing Company    Fargo   ND   
+## 10 Wood Chipper India ~    1434 0.067  70          336 American IPA         12 Fargo Brewing Company    Fargo   ND   
+## 11 Wild Trail Pale Ale     2314 0.057  44          157 American Pale A~     12 Greenbrier Valley Brewi~ Lewisb~ WV   
+## 12 Mothman Black IPA       2313 0.067  71          157 American Black ~     12 Greenbrier Valley Brewi~ Lewisb~ WV</code></pre>
+<pre class="r"><code># Average ABV by style
+beer_brew %&gt;%
+  group_by(style) %&gt;%
+  summarize(
+    mean_abv = mean(abv) * 100,
+    count = n()
+  )</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 90 x 3
+##    style                      mean_abv count
+##    &lt;fct&gt;                         &lt;dbl&gt; &lt;int&gt;
+##  1 Abbey Single Ale               4.9      2
+##  2 Altbier                        5.44    13
+##  3 American Adjunct Lager         4.87    18
+##  4 American Amber / Red Ale       5.75   133
+##  5 American Amber / Red Lager     4.95    29
+##  6 American Barleywine            9.9      3
+##  7 American Black Ale             6.90    36
+##  8 American Blonde Ale            4.96   108
+##  9 American Brown Ale             5.79    70
+## 10 American Dark Wheat Ale        5.23     7
+## # ... with 80 more rows</code></pre>
+<pre class="r"><code># Highest ABV beer styles
+beer_brew %&gt;% 
+  group_by(style) %&gt;% # Group by the beer style
+  summarise(ABV = mean(abv)) %&gt;% # mean abv by style
+  filter(ABV &gt; 0.068) %&gt;% # Only the larger groups
+  ggplot(aes(reorder(style, ABV), ABV)) + # Reorder the bars
+  geom_col(fill = &#39;#C8102E&#39;) + 
+  labs(
+    title = &quot;Booziest Styles&quot;,
+    x = &quot;Style&quot;,
+    y = &quot;Mean ABV&quot;
+  ) +
+  theme_minimal() + 
+  coord_flip()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<pre class="r"><code># Average IBU by style
+beer_brew %&gt;%
+  group_by(style) %&gt;%
+  summarize(
+    mean_ibu = mean(ibu),
+    count = n()
+  )</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 90 x 3
+##    style                      mean_ibu count
+##    &lt;fct&gt;                         &lt;dbl&gt; &lt;int&gt;
+##  1 Abbey Single Ale               22       2
+##  2 Altbier                        34.1    13
+##  3 American Adjunct Lager         11      18
+##  4 American Amber / Red Ale       36.3   133
+##  5 American Amber / Red Lager     23.2    29
+##  6 American Barleywine            96       3
+##  7 American Black Ale             68.9    36
+##  8 American Blonde Ale            21.0   108
+##  9 American Brown Ale             29.9    70
+## 10 American Dark Wheat Ale        27.6     7
+## # ... with 80 more rows</code></pre>
+<pre class="r"><code># Highest IBU beer styles
+beer_brew %&gt;% 
+  group_by(style) %&gt;% # Group by the beer style
+  summarise(IBU = mean(ibu)) %&gt;% # mean abv by style
+  filter(IBU &gt; 55) %&gt;% # Only the larger groups
+  ggplot(aes(reorder(style, IBU), IBU)) + # Reorder the bars
+  geom_col(fill = &#39;#C8102E&#39;) + 
+  labs(
+    title = &quot;Most Bitter Styles&quot;,
+    x = &quot;Style&quot;,
+    y = &quot;Mean IBU&quot;
+  ) +
+  theme_minimal() + 
+  coord_flip()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><img src="ball_farrow_case_study_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<pre class="r"><code># American Barleywine is most bitter but also very high in ABU
+
+# Which states have the fewest/smallest variety of styles
+beer_brew %&gt;%
+  group_by(state, style) %&gt;%
+  summarize(count = n()) %&gt;% 
+  ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;state&#39; (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 967 x 3
+##    state style                    count
+##    &lt;chr&gt; &lt;fct&gt;                    &lt;int&gt;
+##  1 AK    Altbier                      1
+##  2 AK    American Amber / Red Ale     2
+##  3 AK    American Blonde Ale          3
+##  4 AK    American Brown Ale           1
+##  5 AK    American IPA                 7
+##  6 AK    American Pale Ale (APA)      2
+##  7 AK    Cream Ale                    1
+##  8 AK    Czech Pilsener               1
+##  9 AK    English Pale Ale             1
+## 10 AK    Hefeweizen                   1
+## # ... with 957 more rows</code></pre>
+<pre class="r"><code>#Least common styles
+beer_brew %&gt;%
+  count(style) %&gt;%
+  rename(style_count = n) %&gt;%
+  arrange(style_count) %&gt;%
+  slice_head(n = 15) %&gt;%
+  gt() %&gt;%
+  tab_header(title = &quot;Least Popular Styles&quot;) %&gt;% 
+  cols_label(style = &quot;Style&quot;,
+             style_count = &quot;Count&quot;)</code></pre>
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#sqmolbtkzm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#sqmolbtkzm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#sqmolbtkzm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#sqmolbtkzm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#sqmolbtkzm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#sqmolbtkzm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#sqmolbtkzm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#sqmolbtkzm .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sqmolbtkzm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#sqmolbtkzm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#sqmolbtkzm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#sqmolbtkzm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#sqmolbtkzm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#sqmolbtkzm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sqmolbtkzm .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#sqmolbtkzm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#sqmolbtkzm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#sqmolbtkzm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#sqmolbtkzm .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#sqmolbtkzm .gt_left {
+  text-align: left;
+}
+
+#sqmolbtkzm .gt_center {
+  text-align: center;
+}
+
+#sqmolbtkzm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#sqmolbtkzm .gt_font_normal {
+  font-weight: normal;
+}
+
+#sqmolbtkzm .gt_font_bold {
+  font-weight: bold;
+}
+
+#sqmolbtkzm .gt_font_italic {
+  font-style: italic;
+}
+
+#sqmolbtkzm .gt_super {
+  font-size: 65%;
+}
+
+#sqmolbtkzm .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="sqmolbtkzm" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  <thead class="gt_header">
+    <tr>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style>Least Popular Styles</th>
+    </tr>
+    <tr>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style></th>
+    </tr>
+  </thead>
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Style</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">Flanders Oud Bruin</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Grisette</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Other</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Smoked Beer</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Wheat Ale</td>
+      <td class="gt_row gt_center">1</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Abbey Single Ale</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Double / Imperial Pilsner</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">English Stout</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Euro Pale Lager</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Old Ale</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Roggenbier</td>
+      <td class="gt_row gt_center">2</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American Barleywine</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">American India Pale Lager</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Chile Beer</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">English Barleywine</td>
+      <td class="gt_row gt_center">3</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>We were able to find some interesting insights in the data based on location, IBU, and ABV. States on the coast and with major metropolitan areas tend to have more breweries and more beer variety. Utah is a state that could benefit from more variety for low alcohol content beers in particular, and Colorado is likely an already saturated market. For most of Middle America, there is an opportunity to increase distribution or even add new breweries to allow for more variety for consumers. We also suggested 15 different styles that have the least number of existing available beers that could be considered for new beers at Budweiser.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
